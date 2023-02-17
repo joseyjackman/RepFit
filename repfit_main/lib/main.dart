@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
         ),
         home: MyHomePage(),
       ),
@@ -61,7 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = FavoritesPage();
+        page = TutorialPage();
+        break;
+      case 2:
+        page = HistoryPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -80,9 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: Text('Home'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
-                    label: Text('Favorites'),
+                    icon: Icon(Icons.directions_run),
+                    label: Text('Tutorial'),
                   ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.auto_graph), 
+                    label: Text('History')
+                  )
                 ],
                 selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
@@ -178,7 +186,7 @@ class BigCard extends StatelessWidget {
   }
 }
 
-class FavoritesPage extends StatelessWidget {
+class TutorialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -202,6 +210,15 @@ class FavoritesPage extends StatelessWidget {
             title: Text(pair.asLowerCase),
           ),
       ],
+    );
+  }
+}
+
+class HistoryPage extends StatelessWidget {
+  @override 
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('TEST'),
     );
   }
 }
