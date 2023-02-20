@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
         page = TutorialPage();
         break;
       case 2:
+        page = ExerciseDatabase();
+        break;
+      case 3:
         page = HistoryPage();
+        break;
+      case 4:
+        page = StartSessionPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -84,12 +89,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: Text('Home'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.directions_run),
+                    icon: Icon(Icons.lightbulb),
                     label: Text('Tutorial'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.library_books),
+                    label: Text('Exercise Database')
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.auto_graph), 
                     label: Text('History')
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.directions_run),
+                    label: Text('Start Session')
                   )
                 ],
                 selectedIndex: selectedIndex,
@@ -214,11 +227,31 @@ class TutorialPage extends StatelessWidget {
   }
 }
 
+class ExerciseDatabase extends StatelessWidget {
+  @override 
+  Widget build(BuildContext context) {
+    
+    return Center(
+      child: Text('TEST 2'),
+    );
+  }
+}
+
 class HistoryPage extends StatelessWidget {
   @override 
   Widget build(BuildContext context) {
     return Center(
       child: Text('TEST'),
+    );
+  }
+}
+
+class StartSessionPage extends StatelessWidget {
+  @override 
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('TEST'),
+      
     );
   }
 }
