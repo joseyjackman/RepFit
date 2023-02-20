@@ -1,0 +1,1 @@
+compatible video formats for android format: FMP4 (fragmented mp4, so regular mp4 should be fine), webM, Matroska ( prefer webm for small file size)

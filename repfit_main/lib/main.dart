@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 //added video player package
 import 'package:video_player/video_player.dart';
 
+//charts package:
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+
 void main() {
   runApp(MyApp());
 }
