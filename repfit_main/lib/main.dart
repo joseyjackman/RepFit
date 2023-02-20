@@ -2,6 +2,9 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//added video player package
+import 'package:video_player/video_player.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -93,17 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: Text('Tutorial'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.library_books),
-                    label: Text('Exercise Database')
-                  ),
+                      icon: Icon(Icons.library_books),
+                      label: Text('Exercise Database')),
                   NavigationRailDestination(
-                    icon: Icon(Icons.auto_graph), 
-                    label: Text('History')
-                  ),
+                      icon: Icon(Icons.auto_graph), label: Text('History')),
                   NavigationRailDestination(
-                    icon: Icon(Icons.directions_run),
-                    label: Text('Start Session')
-                  )
+                      icon: Icon(Icons.directions_run),
+                      label: Text('Start Session'))
                 ],
                 selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
@@ -243,7 +242,7 @@ class ExerciseDatabase extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: const Text(
-                    'Oeschinen Lake Campground',
+                    'Exercise Database',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -332,7 +331,7 @@ class ExerciseDatabase extends StatelessWidget {
 }
 
 class HistoryPage extends StatelessWidget {
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Text('TEST'),
@@ -341,11 +340,10 @@ class HistoryPage extends StatelessWidget {
 }
 
 class StartSessionPage extends StatelessWidget {
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Text('TEST'),
-      
     );
   }
 }
