@@ -9,6 +9,10 @@ import 'package:video_player/video_player.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
+//early attempt at data persistence/storage:
+import 'user_data.dart';
+
+
 void main() {
   runApp(MyApp());
 }
@@ -336,6 +340,11 @@ class ExerciseDatabase extends StatelessWidget {
 
 class HistoryPage extends StatelessWidget {
   @override
+  //making temp arraylist of "exercise" objects for chart testing
+  var now = DateTime.now();
+  List<Exercise> userProgress = [
+    Exercise(name: "push-ups", reps: 0, excTime: 0, currentTime: now.toString())
+  ]
   Widget build(BuildContext context) {
     return Center(
         //child: Text('TEST'),

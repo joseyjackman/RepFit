@@ -40,6 +40,9 @@ dependencies:
   english_words: ^4.0.0
   syncfusion_flutter_charts: ^20.4.50
   video_player: ^2.5.1
+  sqflite:
+  path:
+
 
 dev_dependencies:
   flutter_test:
