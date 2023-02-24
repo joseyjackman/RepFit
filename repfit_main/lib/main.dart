@@ -233,7 +233,7 @@ class TutorialPage extends StatelessWidget {
 class ExerciseDatabase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Widget titleSection = Container(
+    Widget pushupSection = Container(
       padding: const EdgeInsets.all(32),
       child: Row(
         children: [
@@ -246,54 +246,90 @@ class ExerciseDatabase extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: const Text(
-                    'Exercise Database',
+                    'Pushups',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Text(
-                  'Kandersteg, Switzerland',
+                  '   Pushups are blah blah blah very scary i\'m very unathletic.',
                   style: TextStyle(
-                    color: Colors.grey[500],
+                    color: Colors.black,
                   ),
                 ),
               ],
             ),
           ),
-          /*3*/
-          Icon(
-            Icons.star,
-            color: Colors.red[500],
+        ],
+      ),
+    );
+
+    Widget situpSection = Container(
+      padding: const EdgeInsets.all(32),
+      child: Row(
+        children: [
+          Expanded(
+            /*1*/
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /*2*/
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: const Text(
+                    'Situps',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '   Situps are sitting and lying down repeatedly or something idk I\'m a CS and music major bro.',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const Text('41'),
+        ],
+      ),
+    );
+
+    Widget squatSection = Container(
+      padding: const EdgeInsets.all(32),
+      child: Row(
+        children: [
+          Expanded(
+            /*1*/
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /*2*/
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: const Text(
+                    'Squats',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '   Stand, then pretend to sit. Then stand again.',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
 
     Color color = Theme.of(context).primaryColor;
-
-    Widget buttonSection = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildButtonColumn(color, Icons.call, 'CALL'),
-        _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
-        _buildButtonColumn(color, Icons.share, 'SHARE'),
-      ],
-    );
-
-    Widget textSection = const Padding(
-      padding: EdgeInsets.all(32),
-      child: Text(
-        'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-        'Alps. Situated 1,578 meters above sea level, it is one of the '
-        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-        'half-hour walk through pastures and pine forest, leads you to the '
-        'lake, which warms to 20 degrees Celsius in the summer. Activities '
-        'enjoyed here include rowing, and riding the summer toboggan run.',
-        softWrap: true,
-      ),
-    );
 
     return MaterialApp(
       title: 'Exercise Database',
@@ -303,9 +339,9 @@ class ExerciseDatabase extends StatelessWidget {
         ),
         body: ListView(
           children: [
-            titleSection,
-            buttonSection,
-            textSection,
+            pushupSection,
+            situpSection,
+            squatSection,
           ],
         ),
       ),
