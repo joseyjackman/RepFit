@@ -391,7 +391,16 @@ class StartSessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text('TEST'),
+      child: Container(
+          child: DropdownButton<String>(
+        items: <String>['Pushups', 'Situps', 'Squats'].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (_) {},
+      )),
     );
   }
 }
