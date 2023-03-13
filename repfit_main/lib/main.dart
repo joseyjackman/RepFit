@@ -390,8 +390,11 @@ class HistoryPage extends StatelessWidget {
 class StartSessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('TEST'),
+    return ElevatedButton(
+      onPressed: () {
+        print('button pressed!');
+      },
+      child: Container(color: Colors.red, child: Text('Start Session')),
     );
   }
 }
