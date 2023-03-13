@@ -383,11 +383,39 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         //child: Text('TEST'),
-        child: Container(child: SfCartesianChart()));
+        child: Container(
+            child: SfCartesianChart(
+                // Initialize category axis
+                primaryXAxis: CategoryAxis(),
+                series: <ChartSeries>[
+          // Initialize line series
+          LineSeries<ChartData, String>(
+              dataSource: [
+                // Bind data source
+                ChartData('jan', 35),
+                ChartData('Feb', 28),
+                ChartData('Mar', 34),
+                ChartData('Apr', 32),
+                ChartData('May', 40)
+              ],
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y)
+        ])));
   }
 }
 
-class StartSessionPage extends StatelessWidget {
+class ChartData {
+  ChartData(this.x, this.y);
+  final String x;
+  final double? y;
+}
+
+class StartSessionPage extends StatefulWidget {
+  @override
+  State<StartSessionPage> createState() => _StartSessionPageState();
+}
+
+class _StartSessionPageState extends State<StartSessionPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -397,7 +425,6 @@ class StartSessionPage extends StatelessWidget {
         Text(
           'Select an exercise below:',
           textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         Container(
@@ -405,16 +432,18 @@ class StartSessionPage extends StatelessWidget {
             child: DropdownButton<String>(
               items:
                   <String>['Pushups', 'Situps', 'Squats'].map((String value) {
-                return DropdownMenuItem<String>(
+                return new DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: new Text(value),
                 );
               }).toList(),
               onChanged: (_) {},
             )),
         ElevatedButton(
           onPressed: () {},
-          child: Container(color: Colors.red, child: Text('Start Session')),
+          child: Container(
+              color: Color.fromARGB(255, 152, 54, 244),
+              child: Text('Start Session')),
         ),
       ],
     );
