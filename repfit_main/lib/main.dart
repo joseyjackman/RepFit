@@ -390,26 +390,33 @@ class HistoryPage extends StatelessWidget {
 class StartSessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return ElevatedButton(
-      onPressed: () {
-        print('button pressed!');
-      },
-      child: Container(color: Colors.red, child: Text('Start Session')),
-=======
-    return Center(
-      child: Container(
-          color: Colors.amber,
-          child: DropdownButton<String>(
-            items: <String>['Pushups', 'Situps', 'Squats'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (_) {},
-          )),
->>>>>>> bb930959273f91bdf858e8047cb7836cb84c3bdd
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Select an exercise below:',
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Container(
+            color: Colors.amber,
+            child: DropdownButton<String>(
+              items:
+                  <String>['Pushups', 'Situps', 'Squats'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (_) {},
+            )),
+        ElevatedButton(
+          onPressed: () {},
+          child: Container(color: Colors.red, child: Text('Start Session')),
+        ),
+      ],
     );
   }
 }
