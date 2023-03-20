@@ -289,7 +289,8 @@ class ExerciseDatabase extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '   Situps are sitting and lying down repeatedly or something idk I\'m a CS and music major bro.',
+                  //'   Situps are sitting and lying down repeatedly or something idk I\'m a CS and music major bro.',
+                  '    1) Lie down on your back, with your feet on the floor, knees bent.\n    2) Place your hands on either side of your head in a comfortable\n   position.\n    3) Bend your hips and waist to raise your body off the ground. Make sure you keep looking straight ahead, keeping your chin off your chest in a relaxed position.\n   4) Lower your body back to the ground into the starting position.\n   5) Repeat',
                   style: TextStyle(
                     color: Colors.black,
                   ),
@@ -322,7 +323,8 @@ class ExerciseDatabase extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '   Stand, then pretend to sit. Then stand again.',
+                  //'   Stand, then pretend to sit. Then stand again.',
+                  '   1) Stand with your feet at shoulders-width\n   2) Bend your knees in a motion like you are about to sit in a chair until your knees make an approximately 90 degree angle.\n   3)Stand back up without locking knees and begin another repetition',
                   style: TextStyle(
                     color: Colors.black,
                   ),

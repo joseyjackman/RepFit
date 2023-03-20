@@ -5,6 +5,8 @@ An advanced fitness tracker! (with a damn-nice interface)
 
 #"videos" for tutorials or other examples will be added via .gif format as i had terrible issues with both 404 errors and some https related issues attempting to embed youtube videos and when i did get them working it was both unnecessarily slow and hard to integrate.
 
+#simply add gif files (i took some samples from giphy) to the '/'repfit_main/resources/exc_videos/' directory
+
 
 #personal resources to remember:
 - [how to add data to chart for database section](https://pub.dev/packages/syncfusion_flutter_charts#add-chart-to-the-widget-tree)
