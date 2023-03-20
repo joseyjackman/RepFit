@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 //added video player package
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 //charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -206,28 +207,27 @@ class BigCard extends StatelessWidget {
 }
 
 class TutorialPage extends StatelessWidget {
+  //begin modifications to add a youtube player:
+  //video ids below:
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    if (appState.favorites.isEmpty) {
+    /*if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
       );
-    }
+    }*/
 
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
-          ),
+        Center(child: new Text('Squats: ')),
+        Image.asset('resources/exc_videos/squat.gif'),
+        Center(child: new Text('Push-Ups:')),
+        Image.asset('resources/exc_videos/pushup.gif'),
+        Center(child: new Text('Sit-Ups: ')),
+        Image.asset('resources/exc_videos/situp.gif'),
       ],
     );
   }
@@ -261,6 +261,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('resources/exc_videos/pushup.gif'),
               ],
             ),
           ),
@@ -293,6 +294,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('resources/exc_videos/situp.gif'),
               ],
             ),
           ),
@@ -325,6 +327,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('resources/exc_videos/squat.gif'),
               ],
             ),
           ),
@@ -385,6 +388,8 @@ class HistoryPage extends StatelessWidget {
         //child: Text('TEST'),
         child: Container(
             child: SfCartesianChart(
+                //title
+                title: ChartTitle(text: 'Pushups'),
                 // Initialize category axis
                 primaryXAxis: CategoryAxis(),
                 series: <ChartSeries>[
@@ -392,11 +397,11 @@ class HistoryPage extends StatelessWidget {
           LineSeries<ChartData, String>(
               dataSource: [
                 // Bind data source
-                ChartData('jan', 35),
-                ChartData('Feb', 28),
-                ChartData('Mar', 34),
-                ChartData('Apr', 32),
-                ChartData('May', 40)
+                ChartData('week 1', 35),
+                ChartData('week 2', 28),
+                ChartData('week 3', 34),
+                ChartData('week 4', 32),
+                ChartData('week 5', 40)
               ],
               xValueMapper: (ChartData data, _) => data.x,
               yValueMapper: (ChartData data, _) => data.y)
