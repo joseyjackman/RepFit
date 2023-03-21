@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
         title: 'RepFit',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
         ),
         home: MyHomePage(),
       ),
@@ -425,34 +424,26 @@ class StartSessionPage extends StatefulWidget {
 class _StartSessionPageState extends State<StartSessionPage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          'Select an exercise below:',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Container(
-            color: Colors.amber,
-            child: DropdownButton<String>(
-              items:
-                  <String>['Pushups', 'Situps', 'Squats'].map((String value) {
-                return new DropdownMenuItem<String>(
-                  value: value,
-                  child: new Text(value),
-                );
-              }).toList(),
-              onChanged: (_) {},
-            )),
-        ElevatedButton(
-          onPressed: () {},
-          child: Container(
-              color: Color.fromARGB(255, 152, 54, 244),
-              child: Text('Start Session')),
-        ),
-      ],
+<<<<<<< HEAD
+    return ElevatedButton(
+      onPressed: () {
+        print('button pressed!');
+      },
+      child: Container(color: Colors.red, child: Text('Start Session')),
+=======
+    return Center(
+      child: Container(
+          color: Colors.amber,
+          child: DropdownButton<String>(
+            items: <String>['Pushups', 'Situps', 'Squats'].map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (_) {},
+          )),
+>>>>>>> bb930959273f91bdf858e8047cb7836cb84c3bdd
     );
   }
 }
