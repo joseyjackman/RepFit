@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 //charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 //early attempt at data persistence/storage:
 import 'user_data.dart';
@@ -221,11 +221,11 @@ class TutorialPage extends StatelessWidget {
     return ListView(
       children: [
         Center(child: new Text('Squats: ')),
-        Image.asset('resources/exc_videos/squat.gif'),
+        Image.asset('assets/database_vids/squat.gif'),
         Center(child: new Text('Push-Ups:')),
-        Image.asset('resources/exc_videos/pushup.gif'),
+        Image.asset('assets/database_vids/pushup.gif'),
         Center(child: new Text('Sit-Ups: ')),
-        Image.asset('resources/exc_videos/situp.gif'),
+        Image.asset('assets/database_vids/situp.gif'),
       ],
     );
   }
@@ -259,7 +259,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Image.asset('resources/exc_videos/pushup.gif'),
+                Image.asset('assets/database_vids/pushup.gif'),
               ],
             ),
           ),
@@ -293,7 +293,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Image.asset('resources/exc_videos/situp.gif'),
+                Image.asset('assets/database_vids/situp.gif'),
               ],
             ),
           ),
@@ -327,7 +327,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Image.asset('resources/exc_videos/squat.gif'),
+                Image.asset('assets/database_vids/squat.gif'),
               ],
             ),
           ),
