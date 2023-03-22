@@ -69,10 +69,17 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+<<<<<<< HEAD
       - assets/database_vids/pushup.gif
       - assets/database_vids/situp.gif
       - assets/database_vids/squat.gif
       
+=======
+      - resources/exc_videos/pushup.gif
+      - resources/exc_videos/situp.gif
+      - resources/exc_videos/squat.gif
+      - assets/images/RepFitImage.png
+>>>>>>> 8eee4b26642be0149332336b164b8f6008a40c13
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
