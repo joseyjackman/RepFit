@@ -2,9 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-//added video player package
-import 'package:video_player/video_player.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// ignore_for_file: prefer_const_constructors
 
 //charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -424,13 +422,6 @@ class StartSessionPage extends StatefulWidget {
 class _StartSessionPageState extends State<StartSessionPage> {
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return ElevatedButton(
-      onPressed: () {
-        print('button pressed!');
-      },
-      child: Container(color: Colors.red, child: Text('Start Session')),
-=======
     return Center(
       child: Container(
           color: Colors.amber,
@@ -443,7 +434,6 @@ class _StartSessionPageState extends State<StartSessionPage> {
             }).toList(),
             onChanged: (_) {},
           )),
->>>>>>> bb930959273f91bdf858e8047cb7836cb84c3bdd
     );
   }
 }
