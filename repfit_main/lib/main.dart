@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         title: 'RepFit',
         theme: ThemeData(
           useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
         ),
         home: MyHomePage(),
       ),
@@ -44,6 +45,22 @@ class MyAppState extends ChangeNotifier {
   }
 
   var favorites = <WordPair>[];
+
+  var backgroundColors = {
+    'Generator': Color.fromARGB(255, 163, 214, 255),
+    'Tutorial': Color.fromARGB(255, 255, 244, 193),
+    'Exercise Database': Color.fromARGB(255, 236, 192, 255),
+    'History': Color.fromARGB(255, 192, 255, 216),
+    'Start Session': Color.fromARGB(255, 255, 192, 192),
+  };
+
+  Color backgroundColor =
+      Color.fromARGB(255, 163, 214, 255); // default background color
+
+  void changeBackgroundColor(Color color) {
+    backgroundColor = color;
+    notifyListeners();
+  }
 
   void toggleFavorite() {
     if (favorites.contains(current)) {
@@ -63,8 +80,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
+  var pageNames = [
+    'Generator',
+    'Tutorial',
+    'Exercise Database',
+    'History',
+    'Start Session',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pageName = pageNames[selectedIndex];
+    appState.backgroundColor = appState.backgroundColors[pageName] ??
+        Color.fromARGB(255, 163, 214, 255); // default background color
+
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -87,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
+      var appState = context.watch<MyAppState>();
       return Scaffold(
         body: Row(
           children: [
@@ -121,8 +152,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
+                color: appState.backgroundColor,
+                child: Column(
+                  children: [
+                    if (selectedIndex == 0)
+                      Expanded(
+                        child: Image.asset(
+                          'assets/images/RepFitImage.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    if (selectedIndex == 0) SizedBox(height: 16),
+                    Expanded(child: page),
+                  ],
+                ),
               ),
             ),
           ],
@@ -138,39 +181,9 @@ class GeneratorPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -417,33 +430,83 @@ class ChartData {
 }
 
 class StartSessionPage extends StatefulWidget {
+  const StartSessionPage({Key? key}) : super(key: key);
+
   @override
-  State<StartSessionPage> createState() => _StartSessionPageState();
+  _StartSessionPageState createState() => _StartSessionPageState();
 }
 
 class _StartSessionPageState extends State<StartSessionPage> {
+  String _selectedExercise = 'Select an exercise';
+  Color _buttonColor = Colors.blue;
+
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return ElevatedButton(
-      onPressed: () {
-        print('button pressed!');
-      },
-      child: Container(color: Colors.red, child: Text('Start Session')),
-=======
-    return Center(
-      child: Container(
-          color: Colors.amber,
-          child: DropdownButton<String>(
-            items: <String>['Pushups', 'Situps', 'Squats'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (_) {},
-          )),
->>>>>>> bb930959273f91bdf858e8047cb7836cb84c3bdd
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Start Session'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Select an exercise'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: const Text('Pushups'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Pushups';
+                                _buttonColor = Colors.red;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Situps'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Situps';
+                                _buttonColor = Colors.green;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Squats'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Squats';
+                                _buttonColor = Colors.orange;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Text(
+                _selectedExercise,
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: _buttonColor,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -72,6 +72,7 @@ flutter:
       - resources/exc_videos/pushup.gif
       - resources/exc_videos/situp.gif
       - resources/exc_videos/squat.gif
+      - assets/images/RepFitImage.png
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
