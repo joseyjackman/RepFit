@@ -156,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (selectedIndex == 0)
                       Expanded(
                         child: Image.asset(
-                          'assets/images/RepFitImage.png',
+                          'assets/images/logo.png',
                           fit: BoxFit.cover,
                         ),
                       ),
