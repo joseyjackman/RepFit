@@ -39,10 +39,11 @@ dependencies:
   provider: ^6.0.5
   english_words: ^4.0.0
   syncfusion_flutter_charts: ^20.4.50
-  video_player: ^2.5.1
-  sqflite:
+  #video_player: ^2.5.1
+  #sqflite:
   path:
   youtube_player_flutter: ^8.1.2
+  path_provider: ^1.6.27
 
 
 dev_dependencies:
@@ -103,3 +104,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  
+
+
+ 

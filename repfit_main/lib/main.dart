@@ -10,6 +10,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 //early attempt at data persistence/storage:
 import 'user_data.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -464,6 +466,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
+
+                                _write('pushups', '6');
                               });
                               Navigator.pop(context);
                             },
@@ -506,5 +510,15 @@ class _StartSessionPageState extends State<StartSessionPage> {
         ),
       ),
     );
+  }
+
+//write to file infrastructure below:
+  _write(String exercise, String reps) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    String pathStart = '${directory.path}/';
+    String filePath = pathStart + exercise;
+
+    final File file = File(filePath);
+    await file.writeAsString(reps);
   }
 }
