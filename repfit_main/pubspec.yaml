@@ -43,10 +43,16 @@ dependencies:
   #sqflite:
   path:
   youtube_player_flutter: ^8.1.2
-  path_provider: ^1.6.27
+  #path_provider: ^1.6.27
+  hive: ^2.2.3
+  hive_flutter:
 
 
 dev_dependencies:
+  #stuff for hive
+  hive_generator: 
+  build_runner: 
+
   flutter_test:
     sdk: flutter
 

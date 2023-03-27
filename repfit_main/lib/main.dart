@@ -10,10 +10,15 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 //early attempt at data persistence/storage:
 import 'user_data.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+//data storage
+
+void main() async{
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -467,7 +472,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
 
-                                _write('pushups', '6');
+                                //_write('pushups', '6');
+                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
                             },
@@ -520,5 +526,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
 
     final File file = File(filePath);
     await file.writeAsString(reps);
+  }
+
+  _record(String exercise, int week, int reps) async {
+    var box = Hive.box(exercise);
+    box.put (week, reps)
   }
 }
