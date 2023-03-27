@@ -17,7 +17,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 //data storage
 
-void main() async{
+void main() async {
   await Hive.initFlutter();
   runApp(MyApp());
 }
@@ -519,17 +519,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
   }
 
 //write to file infrastructure below:
-  _write(String exercise, String reps) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    String pathStart = '${directory.path}/';
-    String filePath = pathStart + exercise;
 
-    final File file = File(filePath);
-    await file.writeAsString(reps);
-  }
-
-  _record(String exercise, int week, int reps) async {
+  _record(String exercise, int session, int reps) async {
     var box = Hive.box(exercise);
-    box.put (week, reps)
+    box.put(session, reps);
   }
 }
