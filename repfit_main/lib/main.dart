@@ -396,42 +396,41 @@ class ExerciseDatabase extends StatelessWidget {
 }
 
 class HistoryPage extends StatelessWidget {
+  var box = Hive.openBox('Pushups');
+
+  get chartData => null;
+  /*for (int i = 1; i <= box.length; i++) {
+      chartData.add(ChartData(i.toString(), box.get(i));
+    }*/
+
   @override
-  //making temp arraylist of "exercise" objects for chart testing
-  String now = DateTime.now().toString();
-  List<Exercise> userProgress = [
-    Exercise(name: "push-ups", reps: 0, excTime: 0, currentTime: "now")
-  ];
   Widget build(BuildContext context) {
-    return Center(
-        //child: Text('TEST'),
-        child: Container(
-            child: SfCartesianChart(
-                //title
-                title: ChartTitle(text: 'Pushups'),
-                // Initialize category axis
-                primaryXAxis: CategoryAxis(),
-                series: <ChartSeries>[
-          // Initialize line series
-          LineSeries<ChartData, String>(
-              dataSource: [
-                // Bind data source
-                ChartData('week 1', 35),
-                ChartData('week 2', 28),
-                ChartData('week 3', 34),
-                ChartData('week 4', 32),
-                ChartData('week 5', 40)
-              ],
-              xValueMapper: (ChartData data, _) => data.x,
-              yValueMapper: (ChartData data, _) => data.y)
-        ])));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pushups History'),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: SfCartesianChart(
+          primaryXAxis: CategoryAxis(),
+          series: <LineSeries<ChartData, String>>[
+            LineSeries<ChartData, String>(
+              dataSource: chartData,
+              xValueMapper: (ChartData data, _) => data.session,
+              yValueMapper: (ChartData data, _) => data.reps,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class ChartData {
-  ChartData(this.x, this.y);
-  final String x;
-  final double? y;
+  final String session;
+  final int reps;
+
+  ChartData(this.session, this.reps);
 }
 
 class StartSessionPage extends StatefulWidget {
