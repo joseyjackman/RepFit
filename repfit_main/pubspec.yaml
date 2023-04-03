@@ -42,6 +42,8 @@ dependencies:
   video_player: ^2.5.1
   sqflite:
   path:
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 
 dev_dependencies:

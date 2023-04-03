@@ -2,17 +2,23 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-//added video player package
-import 'package:video_player/video_player.dart';
-
 //charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 
 //early attempt at data persistence/storage:
 import 'user_data.dart';
+//import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+//data storage
+
+void main() async {
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -45,6 +51,22 @@ class MyAppState extends ChangeNotifier {
 
   var favorites = <WordPair>[];
 
+  var backgroundColors = {
+    'Generator': Color.fromARGB(255, 163, 214, 255),
+    'Tutorial': Color.fromARGB(255, 255, 244, 193),
+    'Exercise Database': Color.fromARGB(255, 236, 192, 255),
+    'History': Color.fromARGB(255, 192, 255, 216),
+    'Start Session': Color.fromARGB(255, 255, 192, 192),
+  };
+
+  Color backgroundColor =
+      Color.fromARGB(255, 163, 214, 255); // default background color
+
+  void changeBackgroundColor(Color color) {
+    backgroundColor = color;
+    notifyListeners();
+  }
+
   void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
@@ -63,8 +85,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
+  var pageNames = [
+    'Generator',
+    'Tutorial',
+    'Exercise Database',
+    'History',
+    'Start Session',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pageName = pageNames[selectedIndex];
+    appState.backgroundColor = appState.backgroundColors[pageName] ??
+        Color.fromARGB(255, 163, 214, 255); // default background color
+
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -87,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
+      var appState = context.watch<MyAppState>();
       return Scaffold(
         body: Row(
           children: [
@@ -121,10 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
               child: Container(
-<<<<<<< Updated upstream
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
-=======
                 color: appState.backgroundColor,
                 child: Column(
                   children: [
@@ -139,7 +171,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     Expanded(child: page),
                   ],
                 ),
->>>>>>> Stashed changes
               ),
             ),
           ],
@@ -155,39 +186,9 @@ class GeneratorPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -223,6 +224,9 @@ class BigCard extends StatelessWidget {
 }
 
 class TutorialPage extends StatelessWidget {
+  //begin modifications to add a youtube player:
+  //video ids below:
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -361,32 +365,19 @@ class TutorialPage extends StatelessWidget {
       )
     );
 
-    if (appState.favorites.isEmpty) {
+    /*if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
       );
-    }
+    }*/
 
     return ListView(
       children: [
-<<<<<<< Updated upstream
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
-          ),
-=======
         intro,
         home,
         exercisedatabase,
         history,
         startsession,
->>>>>>> Stashed changes
       ],
     );
   }
@@ -420,6 +411,7 @@ class ExerciseDatabase extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('assets/database_vids/pushup.gif'),
               ],
             ),
           ),
@@ -447,11 +439,13 @@ class ExerciseDatabase extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '   Situps are sitting and lying down repeatedly or something idk I\'m a CS and music major bro.',
+                  //'   Situps are sitting and lying down repeatedly or something idk I\'m a CS and music major bro.',
+                  '    1) Lie down on your back, with your feet on the floor, knees bent.\n    2) Place your hands on either side of your head in a comfortable\n   position.\n    3) Bend your hips and waist to raise your body off the ground. Make sure you keep looking straight ahead, keeping your chin off your chest in a relaxed position.\n   4) Lower your body back to the ground into the starting position.\n   5) Repeat',
                   style: TextStyle(
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('assets/database_vids/situp.gif'),
               ],
             ),
           ),
@@ -479,11 +473,13 @@ class ExerciseDatabase extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '   Stand, then pretend to sit. Then stand again.',
+                  //'   Stand, then pretend to sit. Then stand again.',
+                  '   1) Stand with your feet at shoulders-width\n   2) Bend your knees in a motion like you are about to sit in a chair until your knees make an approximately 90 degree angle.\n   3)Stand back up without locking knees and begin another repetition',
                   style: TextStyle(
                     color: Colors.black,
                   ),
                 ),
+                Image.asset('assets/database_vids/squat.gif'),
               ],
             ),
           ),
@@ -542,15 +538,123 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         //child: Text('TEST'),
-        child: Container(child: SfCartesianChart()));
+        child: Container(
+            child: SfCartesianChart(
+                //title
+                title: ChartTitle(text: 'Pushups'),
+                // Initialize category axis
+                primaryXAxis: CategoryAxis(),
+                series: <ChartSeries>[
+          // Initialize line series
+          LineSeries<ChartData, String>(
+              dataSource: [
+                // Bind data source
+                ChartData('week 1', 35),
+                ChartData('week 2', 28),
+                ChartData('week 3', 34),
+                ChartData('week 4', 32),
+                ChartData('week 5', 40)
+              ],
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y)
+        ])));
   }
 }
 
-class StartSessionPage extends StatelessWidget {
+class ChartData {
+  ChartData(this.x, this.y);
+  final String x;
+  final double? y;
+}
+
+class StartSessionPage extends StatefulWidget {
+  const StartSessionPage({Key? key}) : super(key: key);
+
+  @override
+  _StartSessionPageState createState() => _StartSessionPageState();
+}
+
+class _StartSessionPageState extends State<StartSessionPage> {
+  String _selectedExercise = 'Select an exercise';
+  Color _buttonColor = Colors.blue;
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('TEST'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Start Session'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Select an exercise'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: const Text('Pushups'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Pushups';
+                                _buttonColor = Colors.red;
+
+                                //_write('pushups', '6');
+                                _record(_selectedExercise, 1, 1);
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Situps'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Situps';
+                                _buttonColor = Colors.green;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Squats'),
+                            onTap: () {
+                              setState(() {
+                                _selectedExercise = 'Squats';
+                                _buttonColor = Colors.orange;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Text(
+                _selectedExercise,
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: _buttonColor,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+//write to file infrastructure below:
+
+  _record(String exercise, int session, int reps) async {
+    var box = Hive.box(exercise);
+    box.put(session, reps);
   }
 }
