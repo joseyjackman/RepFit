@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 //charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
-//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
@@ -12,12 +11,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'user_data.dart';
 //import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'package:hive/hive.dart';
+//import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 //data storage
 
-void main() async {
+Future main() async {
   await Hive.initFlutter();
   runApp(MyApp());
 }
@@ -224,18 +223,9 @@ class BigCard extends StatelessWidget {
 }
 
 class TutorialPage extends StatelessWidget {
-  //begin modifications to add a youtube player:
-  //video ids below:
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    /*if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }*/
 
     return ListView(
       children: [
@@ -273,7 +263,7 @@ class ExerciseDatabase extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '   Pushups are blah blah blah very scary i\'m very unathletic.',
+                  '   1)Start at in a plank position with knees and elbows straight at about a 30 degree angle. \n2) Lower yourself down until the elbows form approximately a right angle without allowing the waist to bend \n3) Repeat',
                   style: TextStyle(
                     color: Colors.black,
                   ),
@@ -395,16 +385,41 @@ class ExerciseDatabase extends StatelessWidget {
   }
 }
 
+/*Future getNum(String exercise, int target) async {
+  var box = await Hive.openBox(exercise);
+
+  if (box.get(target) != 0) {
+    return box.get(target);
+  } else {
+    return -1;
+  }
+}*/
+
+Future<List<ChartData>> makeList(String input) async {
+  List<ChartData> chartData = [];
+
+  var box = await Hive.openBox(input);
+  int j = 0;
+  int length = 0;
+  //establish length of box
+  while (box.get(j.toInt()) != null) {
+    length = length + 1;
+  }
+  for (int i = 1; i <= length; i++) {
+    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
+  }
+  return chartData;
+}
+
 class HistoryPage extends StatelessWidget {
+  String exercise = 'PushUps';
   var box = Hive.openBox('Pushups');
 
-  get chartData => null;
-  /*for (int i = 1; i <= box.length; i++) {
-      chartData.add(ChartData(i.toString(), box.get(i));
-    }*/
+  Future<List<ChartData>> chartData = makeList('PushUps');
 
   @override
-  Widget build(BuildContext context) {
+  //maybe change to futurebuilder
+  Future<Widget> build(BuildContext context) async {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pushups History'),
@@ -415,7 +430,8 @@ class HistoryPage extends StatelessWidget {
           primaryXAxis: CategoryAxis(),
           series: <LineSeries<ChartData, String>>[
             LineSeries<ChartData, String>(
-              dataSource: chartData,
+              dataSource: await makeList('PushUps'),
+              //dataSource: chartData,
               xValueMapper: (ChartData data, _) => data.session,
               yValueMapper: (ChartData data, _) => data.reps,
             ),
@@ -424,18 +440,25 @@ class HistoryPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class ChartData {
-  final String session;
-  final int reps;
+  String session;
+  int reps;
 
   ChartData(this.session, this.reps);
+
+  void add(int sessionIn, int repsIn) {
+    reps = repsIn;
+    session = sessionIn.toString();
+  }
 }
 
 class StartSessionPage extends StatefulWidget {
   const StartSessionPage({Key? key}) : super(key: key);
-
   @override
   _StartSessionPageState createState() => _StartSessionPageState();
 }
@@ -516,8 +539,6 @@ class _StartSessionPageState extends State<StartSessionPage> {
       ),
     );
   }
-
-//write to file infrastructure below:
 
   _record(String exercise, int session, int reps) async {
     var box = Hive.box(exercise);
