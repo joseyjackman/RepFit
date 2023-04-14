@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +20,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 //data storage
 
 void main() async {
-  await Hive.initFlutter();
+  //await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -434,6 +436,9 @@ class ChartData {
   final double? y;
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of StartSessionPage Class
+-----------------------------------------------------------------------------------------*/
 class StartSessionPage extends StatefulWidget {
   const StartSessionPage({Key? key}) : super(key: key);
 
@@ -441,6 +446,9 @@ class StartSessionPage extends StatefulWidget {
   _StartSessionPageState createState() => _StartSessionPageState();
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of _StartSessionPageState Class
+-----------------------------------------------------------------------------------------*/
 class _StartSessionPageState extends State<StartSessionPage> {
   String _selectedExercise = 'Select an exercise';
   Color _buttonColor = Colors.blue;
@@ -471,11 +479,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
-
-                                //_write('pushups', '6');
-                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                           ListTile(
@@ -486,6 +492,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                                 _buttonColor = Colors.green;
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                           ListTile(
@@ -496,6 +503,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                                 _buttonColor = Colors.orange;
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                         ],
@@ -518,10 +526,157 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  void _showStartOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Start options'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: const Text('Start manually'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _startManually();
+                },
+              ),
+              ListTile(
+                title: const Text('Activate voice start'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _activateVoiceStart();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _startManually() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Manual start'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  _startTimer();
+                  Navigator.pop(context);
+                },
+                child: const Text('Start exercise'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _activateVoiceStart() {
+    // Code to activate voice start feature goes here
+  }
+
+  void _startTimer() {
+    // Code to start timer goes here
+    // After the timer is stopped, show a dialog to store how many reps were done
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Start timer'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Press "Start" to begin exercise timer.'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _startCountdown();
+                },
+                child: const Text('Start'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _startCountdown() {
+    int _counter = 10; // initial timer value in seconds
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Countdown'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('$_counter'),
+            ],
+          ),
+        );
+      },
+    );
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_counter > 0) {
+        setState(() {
+          _counter--;
+        });
+      } else {
+        timer.cancel();
+        _showRepsDialog();
+      }
+    });
+  }
+
+  void _showRepsDialog() {
+    int _repsCount = 0;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter reps'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Enter number of reps',
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  _repsCount = int.parse(value);
+                },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _saveRepsCount(_repsCount);
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _saveRepsCount(int repsCount) {
+    // code to save the reps count
+  }
+}
 //write to file infrastructure below:
 
-  _record(String exercise, int session, int reps) async {
-    var box = Hive.box(exercise);
-    box.put(session, reps);
-  }
+_record(String exercise, int session, int reps) async {
+  var box = Hive.box(exercise);
+  box.put(session, reps);
 }
