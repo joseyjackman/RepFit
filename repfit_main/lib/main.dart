@@ -412,37 +412,47 @@ Future<List<ChartData>> makeList(String input) async {
 }
 
 class HistoryPage extends StatelessWidget {
-  String exercise = 'PushUps';
-  var box = Hive.openBox('Pushups');
+  final String exercise = 'PushUps';
+  final box = Hive.openBox('Pushups');
 
-  Future<List<ChartData>> chartData = makeList('PushUps');
+  Future<List<ChartData>> _fetchChartData() async {
+    final data = await makeList(exercise);
+    return data;
+  }
 
   @override
-  //maybe change to futurebuilder
-  Future<Widget> build(BuildContext context) async {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pushups History'),
       ),
       body: Container(
         padding: EdgeInsets.all(16),
-        child: SfCartesianChart(
-          primaryXAxis: CategoryAxis(),
-          series: <LineSeries<ChartData, String>>[
-            LineSeries<ChartData, String>(
-              dataSource: await makeList('PushUps'),
-              //dataSource: chartData,
-              xValueMapper: (ChartData data, _) => data.session,
-              yValueMapper: (ChartData data, _) => data.reps,
-            ),
-          ],
+        child: FutureBuilder<List<ChartData>>(
+          future: _fetchChartData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              final data = snapshot.data!;
+              return SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                series: <LineSeries<ChartData, String>>[
+                  LineSeries<ChartData, String>(
+                    dataSource: data,
+                    xValueMapper: (ChartData data, _) => data.session,
+                    yValueMapper: (ChartData data, _) => data.reps,
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
   }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class ChartData {
