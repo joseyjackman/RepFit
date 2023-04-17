@@ -149,13 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.all(10),
                 color: appState.backgroundColor,
                 child: Column(
-                  
                   children: [
                     if (selectedIndex == 0)
                       Expanded(
                         child: Column(
                           children: [
                             Image.asset(
+
                               'assets/images/logo.png'
                             )
                           ],
