@@ -1,30 +1,27 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-//charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
-//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 //early attempt at data persistence/storage:
-import 'user_data.dart';
-//import 'package:path_provider/path_provider.dart';
+//import 'user_data.dart';
 import 'dart:io';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+var Pushups = Hive.box('Pushups');
+var Situps = Hive.box('Situps');
+var Squats = Hive.box('Squats');
 //data storage
-
-void main() async {
+Future main() async {
   await Hive.initFlutter();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  //initialize boxes
 
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -42,15 +39,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-
-  var favorites = <WordPair>[];
-
   var backgroundColors = {
     'Generator': Color.fromARGB(255, 163, 214, 255),
     'Tutorial': Color.fromARGB(255, 255, 244, 193),
@@ -64,15 +52,6 @@ class MyAppState extends ChangeNotifier {
 
   void changeBackgroundColor(Color color) {
     backgroundColor = color;
-    notifyListeners();
-  }
-
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
     notifyListeners();
   }
 }
@@ -92,14 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
     'History',
     'Start Session',
   ];
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pageName = pageNames[selectedIndex];
     appState.backgroundColor = appState.backgroundColors[pageName] ??
         Color.fromARGB(255, 163, 214, 255); // default background color
-
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -164,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(
                         child: Image.asset(
                           'assets/images/logo.png',
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     if (selectedIndex == 0) SizedBox(height: 16),
@@ -184,7 +161,6 @@ class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
 
     return Center(
       child: Column(
@@ -197,10 +173,7 @@ class GeneratorPage extends StatelessWidget {
 class BigCard extends StatelessWidget {
   const BigCard({
     Key? key,
-    required this.pair,
   }) : super(key: key);
-
-  final WordPair pair;
 
   @override
   Widget build(BuildContext context) {
@@ -213,151 +186,24 @@ class BigCard extends StatelessWidget {
       color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: pair.asPascalCase,
-        ),
       ),
     );
   }
 }
 
 class TutorialPage extends StatelessWidget {
-  //begin modifications to add a youtube player:
-  //video ids below:
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    Widget intro = Container(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'INTRO',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                Text(
-                    'Welcome to the RepFit fitness app! This page will show you exactly what your options are to navigate this app, as well as what each option means. Aside from this Tutorial page, there are 4 other pages: The Home page, the Exercise Database, the History page, and the Start Session page.')
-              ],
-            ))
-          ],
-        ));
-
-    Widget home = Container(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'HOME',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                Text(
-                    'The function of the Home page is to serve as an introduction to the rest of the RepFit app. There, you will find an introduction to RepFit\'s founders, as well as our mission statement.')
-              ],
-            ))
-          ],
-        ));
-
-    Widget exercisedatabase = Container(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'EXERCISE DATABASE',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                Text(
-                    'The Exercise Database your one-stop shop for all your exercise questions. Conatining both videos and a text description of every exercise we track in the RepFit app, the database allows you to either begin new forms of exercise, or else brush up on your existing technique.')
-              ],
-            ))
-          ],
-        ));
-
-    Widget history = Container(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'HISTORY',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                Text(
-                    'In order to view your fitness progress, head over to the History page. As you complete more exercise sessions, the graph will increase in detail, allowing you to see your exact rate of improvement for each exercise.')
-              ],
-            ))
-          ],
-        ));
-
-    Widget startsession = Container(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'START SESSION',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-                Text(
-                    'Last, but certainly not least, is the Start Session page, where you\'ll actually record your progress each time you work out. After navigating to the Start Session page, you\'ll be able to select the exercise you\'d like to do. After completing the exercise, simply enter the number of repetitions, and voila! The number will be automatically stored in the History tab, to be viewed next time you\'re over there.')
-              ],
-            ))
-          ],
-        ));
-
-    /*if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }*/
 
     return ListView(
       children: [
-        intro,
-        home,
-        exercisedatabase,
-        history,
-        startsession,
+        Center(child: new Text('Squats: ')),
+        Image.asset('assets/database_vids/squat.gif'),
+        Center(child: new Text('Push-Ups:')),
+        Image.asset('assets/database_vids/pushup.gif'),
+        Center(child: new Text('Sit-Ups: ')),
+        Image.asset('assets/database_vids/situp.gif'),
       ],
     );
   }
@@ -508,16 +354,6 @@ class ExerciseDatabase extends StatelessWidget {
   }
 }
 
-/*Future getNum(String exercise, int target) async {
-  var box = await Hive.openBox(exercise);
-
-  if (box.get(target) != 0) {
-    return box.get(target);
-  } else {
-    return -1;
-  }
-}*/
-
 Future<List<ChartData>> makeList(String input) async {
   List<ChartData> chartData = [];
 
@@ -535,8 +371,8 @@ Future<List<ChartData>> makeList(String input) async {
 }
 
 class HistoryPage extends StatelessWidget {
-  final String exercise = 'PushUps';
-  final box = Hive.openBox('Pushups');
+  String exercise = 'PushUps';
+  var box = Hive.openBox('Pushups');
 
   Future<List<ChartData>> _fetchChartData() async {
     final data = await makeList(exercise);
@@ -672,9 +508,17 @@ class _StartSessionPageState extends State<StartSessionPage> {
       ),
     );
   }
+}
 
-  _record(String exercise, int session, int reps) async {
-    var box = Hive.box(exercise);
-    box.put(session, reps);
+void _record(String exercise, int session, int reps) {
+  if (exercise == 'Pushups') {
+    Hive.openBox(exercise);
+    Pushups.put(session, reps);
+  } else if (exercise == 'Situps') {
+    Hive.openBox(exercise);
+    Situps.put(session, reps);
+  } else if (exercise == 'Squats') {
+    Hive.openBox(exercise);
+    Squats.put(session, reps);
   }
 }
