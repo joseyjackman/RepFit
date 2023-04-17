@@ -3,10 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
-
-//early attempt at data persistence/storage:
-//import 'user_data.dart';
-import 'dart:io';
 import 'package:hive_flutter/hive_flutter.dart';
 
 var Pushups = Hive.box('Pushups');
@@ -372,7 +368,9 @@ Future<List<ChartData>> makeList(String input) async {
 
 class HistoryPage extends StatelessWidget {
   String exercise = 'PushUps';
-  var box = Hive.openBox('Pushups');
+  var Pushups = Hive.openBox('Pushups');
+  var Situps = Hive.openBox('Situps');
+  var Squats = Hive.openBox('Squats');
 
   Future<List<ChartData>> _fetchChartData() async {
     final data = await makeList(exercise);
@@ -475,6 +473,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Situps';
                                 _buttonColor = Colors.green;
+                                //_write('pushups', '6');
+                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
                             },
@@ -485,6 +485,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Squats';
                                 _buttonColor = Colors.orange;
+                                //_write('pushups', '6');
+                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
                             },
