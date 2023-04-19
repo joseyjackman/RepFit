@@ -1,3 +1,7 @@
+// ignore_for_file: non_constant_identifier_names
+
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -366,12 +370,23 @@ Future<List<ChartData>> makeList(String input) async {
   return chartData;
 }
 
-class HistoryPage extends StatelessWidget {
+//converted to stateful to allow a call of "setstate()" within the elevatedbutton refresh in bottom of column.
+class HistoryPage extends StatefulWidget {
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
   String exercise = 'PushUps';
+
+  //declare box vars to avoid annoying errors and provide access
   var Pushups = Hive.openBox('Pushups');
+
   var Situps = Hive.openBox('Situps');
+
   var Squats = Hive.openBox('Squats');
 
+  //end
   Future<List<ChartData>> _fetchChartData() async {
     final data = await makeList(exercise);
     return data;
@@ -382,31 +397,58 @@ class HistoryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pushups History'),
+        //title: Text(Hive.openBox('Pushups').get(1).toString()),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: FutureBuilder<List<ChartData>>(
-          future: _fetchChartData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final data = snapshot.data!;
-              return SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                series: <LineSeries<ChartData, String>>[
-                  LineSeries<ChartData, String>(
-                    dataSource: data,
-                    xValueMapper: (ChartData data, _) => data.session,
-                    yValueMapper: (ChartData data, _) => data.reps,
-                  ),
-                ],
-              );
-            }
-          },
-        ),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            child: FutureBuilder<List<ChartData>>(
+              future: _fetchChartData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  final data = snapshot.data!;
+                  return SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    series: <LineSeries<ChartData, String>>[
+                      LineSeries<ChartData, String>(
+                        dataSource: data,
+                        xValueMapper: (ChartData data, _) => data.session,
+                        yValueMapper: (ChartData data, _) => data.reps,
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.pressed)) {
+                    return Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withOpacity(0.5);
+                  }
+                  return null; // Use the component's default.
+                },
+              ),
+            ),
+            child: const Text('Refresh'),
+            onPressed: () {
+              setState(() {});
+              //context;
+
+              // ...
+            },
+          ),
+        ],
       ),
     );
   }
@@ -463,6 +505,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
 
                                 //_write('pushups', '6');
                                 _record(_selectedExercise, 1, 1);
+                                _record(_selectedExercise, 2, 2);
+                                _record(_selectedExercise, 3, 3);
                               });
                               Navigator.pop(context);
                             },
