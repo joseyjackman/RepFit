@@ -1,3 +1,6 @@
+/*-----------------------------------------------------------------------------------------
+                                Imports
+-----------------------------------------------------------------------------------------*/
 import 'dart:async';
 
 import 'package:english_words/english_words.dart';
@@ -24,6 +27,9 @@ void main() async {
   runApp(MyApp());
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyApp Class
+-----------------------------------------------------------------------------------------*/
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -43,6 +49,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyAppState Class
+-----------------------------------------------------------------------------------------*/
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
 
@@ -68,11 +77,17 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyHomePage Class
+-----------------------------------------------------------------------------------------*/
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of _MyHomePageState Class
+-----------------------------------------------------------------------------------------*/
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
@@ -155,12 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (selectedIndex == 0)
                       Expanded(
                         child: Column(
-                          children: [
-                            Image.asset(
-
-                              'assets/images/logo.png'
-                            )
-                          ],
+                          children: [Image.asset('assets/images/logo.png')],
                         ),
                       ),
                     if (selectedIndex == 0) SizedBox(height: 1),
@@ -177,6 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of GeneratorPage Class
+-----------------------------------------------------------------------------------------*/
 class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -191,35 +204,9 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    Key? key,
-    required this.pair,
-  }) : super(key: key);
-
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: pair.asPascalCase,
-        ),
-      ),
-    );
-  }
-}
-
+/*-----------------------------------------------------------------------------------------
+                            Start of TutorialPage Class
+-----------------------------------------------------------------------------------------*/
 class TutorialPage extends StatelessWidget {
   //begin modifications to add a youtube player:
   //video ids below:
@@ -228,139 +215,119 @@ class TutorialPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     Widget intro = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'INTRO',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'INTRO',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 Text(
-                  'Welcome to the RepFit fitness app! This page will show you exactly what your options are to navigate this app, as well as what each option means. Aside from this Tutorial page, there are 4 other pages: The Home page, the Exercise Database, the History page, and the Start Session page.'
-                )
+                    'Welcome to the RepFit fitness app! This page will show you exactly what your options are to navigate this app, as well as what each option means. Aside from this Tutorial page, there are 4 other pages: The Home page, the Exercise Database, the History page, and the Start Session page.')
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
 
     Widget home = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'HOME',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'HOME',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 Text(
-                  'The function of the Home page is to serve as an introduction to the rest of the RepFit app. There, you will find an introduction to RepFit\'s founders, as well as our mission statement.'
-                )
+                    'The function of the Home page is to serve as an introduction to the rest of the RepFit app. There, you will find an introduction to RepFit\'s founders, as well as our mission statement.')
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
 
     Widget exercisedatabase = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'EXERCISE DATABASE',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'EXERCISE DATABASE',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 Text(
-                  'The Exercise Database your one-stop shop for all your exercise questions. Conatining both videos and a text description of every exercise we track in the RepFit app, the database allows you to either begin new forms of exercise, or else brush up on your existing technique.'
-                )
+                    'The Exercise Database your one-stop shop for all your exercise questions. Conatining both videos and a text description of every exercise we track in the RepFit app, the database allows you to either begin new forms of exercise, or else brush up on your existing technique.')
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
 
     Widget history = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'HISTORY',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'HISTORY',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 Text(
-                  'In order to view your fitness progress, head over to the History page. As you complete more exercise sessions, the graph will increase in detail, allowing you to see your exact rate of improvement for each exercise.'
-                )
+                    'In order to view your fitness progress, head over to the History page. As you complete more exercise sessions, the graph will increase in detail, allowing you to see your exact rate of improvement for each exercise.')
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
 
     Widget startsession = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'START SESSION',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ),
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'START SESSION',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 Text(
-                  'Last, but certainly not least, is the Start Session page, where you\'ll actually record your progress each time you work out. After navigating to the Start Session page, you\'ll be able to select the exercise you\'d like to do. After completing the exercise, simply enter the number of repetitions, and voila! The number will be automatically stored in the History tab, to be viewed next time you\'re over there.'
-                )
+                    'Last, but certainly not least, is the Start Session page, where you\'ll actually record your progress each time you work out. After navigating to the Start Session page, you\'ll be able to select the exercise you\'d like to do. After completing the exercise, simply enter the number of repetitions, and voila! The number will be automatically stored in the History tab, to be viewed next time you\'re over there.')
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
 
     /*if (appState.favorites.isEmpty) {
       return Center(
@@ -380,6 +347,9 @@ class TutorialPage extends StatelessWidget {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of ExerciseDatabase Class
+-----------------------------------------------------------------------------------------*/
 class ExerciseDatabase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -525,6 +495,9 @@ class ExerciseDatabase extends StatelessWidget {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of History Page Class
+-----------------------------------------------------------------------------------------*/
 class HistoryPage extends StatelessWidget {
   @override
   //making temp arraylist of "exercise" objects for chart testing
@@ -580,6 +553,11 @@ class StartSessionPage extends StatefulWidget {
 class _StartSessionPageState extends State<StartSessionPage> {
   String _selectedExercise = 'Select an exercise';
   Color _buttonColor = Colors.blue;
+  bool _exerciseEnded = false;
+  bool _timerStarted = false;
+  int _timeElapsed = 0;
+  int _completedReps = 0;
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -648,10 +626,59 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 primary: _buttonColor,
               ),
             ),
+            const SizedBox(height: 16),
+            Text(
+              _formatTime(_timeElapsed),
+              style: const TextStyle(fontSize: 32),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _timerStarted = !_timerStarted;
+                });
+                _timerStarted ? _startTimer() : _stopTimer();
+              },
+              child: Text(
+                _timerStarted ? 'Stop' : 'Start',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _exerciseEnded ? null : _endExercise,
+              child: const Text('End Exercise'),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$remainingSeconds';
+  }
+
+  void _startTimer() {
+    if (_timer == null) {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          _timeElapsed++;
+        });
+      });
+    }
+  }
+
+  void _stopTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+    }
   }
 
   void _showStartOptions() {
@@ -696,7 +723,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
               ElevatedButton(
                 onPressed: () {
                   _startTimer();
-                  Navigator.pop(context);
+                  setState(() {
+                    _timerStarted;
+                  });
                 },
                 child: const Text('Start exercise'),
               ),
@@ -707,101 +736,67 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  void _endExercise() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Enter the number of reps completed"),
+          content: TextFormField(
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a number';
+              }
+              final reps = int.tryParse(value);
+              if (reps == null || reps <= 0) {
+                return 'Please enter a positive number';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              setState(() {
+                _exerciseEnded = true;
+                _completedReps = int.parse(value!);
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // Exit the alert box
+              });
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // Exit the alert box
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final form = Form.of(context);
+                if (form != null && form.validate()) {
+                  form.save();
+                }
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _activateVoiceStart() {
     // Code to activate voice start feature goes here
   }
 
-  void _startTimer() {
-    // Code to start timer goes here
-    // After the timer is stopped, show a dialog to store how many reps were done
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Start timer'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text('Press "Start" to begin exercise timer.'),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _startCountdown();
-                },
-                child: const Text('Start'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _startCountdown() {
-    int _counter = 10; // initial timer value in seconds
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Countdown'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text('$_counter'),
-            ],
-          ),
-        );
-      },
-    );
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_counter > 0) {
-        setState(() {
-          _counter--;
-        });
-      } else {
-        timer.cancel();
-        _showRepsDialog();
-      }
-    });
-  }
-
-  void _showRepsDialog() {
-    int _repsCount = 0;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter reps'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter number of reps',
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  _repsCount = int.parse(value);
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _saveRepsCount(_repsCount);
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _saveRepsCount(int repsCount) {
-    // code to save the reps count
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
   }
 }
+
 //write to file infrastructure below:
 
 _record(String exercise, int session, int reps) async {
