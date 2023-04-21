@@ -164,9 +164,48 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     if (selectedIndex == 0)
                       Expanded(
+<<<<<<< Updated upstream
                         child: Image.asset(
                           'assets/images/logo.png',
                           fit: BoxFit.cover,
+=======
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/logo.png',
+                              height: 200,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 40, bottom: 40),
+                              child: const Text(
+                                'MISSION STATEMENT',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ),
+                            Text(
+                              'Our mission is to allow users to develop a synergy with our app, creating a positive feedback loop in which the user will calendarise progress via gamification, leading to a more robust lifestyle.',
+                              textAlign: TextAlign.center,
+                            ),
+                            Image.asset(
+                              'assets/images/whiteboys.png',
+                              height: 200,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 40, bottom: 40),
+                              child: const Text(
+                                'ABOUT THE FOUNDERS',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ),
+                            Text('RepFit was founded by Hunter Odom, Austin Jackman, and Raymond Riddell, three young Computer Science majors with a passion for both exercise and helping others. Filler text filler text filler text filler text.')
+                          ],
+>>>>>>> Stashed changes
                         ),
                       ),
                     if (selectedIndex == 0) SizedBox(height: 16),
@@ -232,12 +271,6 @@ class TutorialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    /*if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }*/
 
     return ListView(
       children: [
