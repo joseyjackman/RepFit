@@ -80,6 +80,7 @@ flutter:
       - assets/database_vids/situp.gif
       - assets/database_vids/squat.gif
       - assets/images/logo.png
+      - assets/images/whiteboys.png
       
 
   #   - images/a_dot_burr.jpeg

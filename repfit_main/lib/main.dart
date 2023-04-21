@@ -164,11 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     if (selectedIndex == 0)
                       Expanded(
-<<<<<<< Updated upstream
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          fit: BoxFit.cover,
-=======
                         child: Column(
                           children: [
                             Image.asset(
@@ -205,7 +200,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Text('RepFit was founded by Hunter Odom, Austin Jackman, and Raymond Riddell, three young Computer Science majors with a passion for both exercise and helping others. Filler text filler text filler text filler text.')
                           ],
->>>>>>> Stashed changes
                         ),
                       ),
                     if (selectedIndex == 0) SizedBox(height: 16),
