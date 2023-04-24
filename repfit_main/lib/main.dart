@@ -374,10 +374,8 @@ Future<List<ChartData>> makeList(String input) async {
 
   var box = await Hive.openBox(input);
   int j = 1;
-  int length = 0;
   //establish length of box
   while (box.get(j.toInt()) != null) {
-    length = length + 1;
     chartData.add(ChartData(j, box.get(j).toInt()));
     j = j + 1;
   }
@@ -714,6 +712,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 _record('Pushups', 1, 1);
                 _record('Pushups', 2, 2);
                 _record('Pushups', 3, 3);
+                _record('Pushups', 4, 3);
                 Navigator.of(context, rootNavigator: true)
                     .pop(); // Exit the alert box
               },
