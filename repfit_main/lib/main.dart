@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:js';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +13,21 @@ var Pushups = Hive.box('Pushups');
 var Situps = Hive.box('Situps');
 var Squats = Hive.box('Squats');
 //data storage
+//write to file infrastructure below:
+
+void _record(String exercise, int session, int reps) {
+  if (exercise == 'Pushups') {
+    Hive.openBox(exercise);
+    Pushups.put(session, reps);
+  } else if (exercise == 'Situps') {
+    Hive.openBox(exercise);
+    Situps.put(session, reps);
+  } else if (exercise == 'Squats') {
+    Hive.openBox(exercise);
+    Squats.put(session, reps);
+  }
+}
+
 Future main() async {
   await Hive.initFlutter();
   runApp(MyApp());
@@ -355,6 +370,7 @@ class ExerciseDatabase extends StatelessWidget {
 }
 
 Future<List<ChartData>> makeList(String input) async {
+  print("running makelist future");
   List<ChartData> chartData = [];
 
   var box = await Hive.openBox(input);
@@ -363,10 +379,13 @@ Future<List<ChartData>> makeList(String input) async {
   //establish length of box
   while (box.get(j.toInt()) != null) {
     length = length + 1;
+    chartData.add(ChartData(j.toString(), box.get(j).toInt()));
   }
-  for (int i = 1; i <= length; i++) {
+  /*for (int i = 1; i <= length; i++) {
     chartData.add(ChartData(i.toString(), box.get(i).toInt()));
-  }
+  }*/
+  //print(box.get(100));
+
   return chartData;
 }
 
@@ -472,9 +491,17 @@ class StartSessionPage extends StatefulWidget {
   _StartSessionPageState createState() => _StartSessionPageState();
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of _StartSessionPageState Class
+-----------------------------------------------------------------------------------------*/
 class _StartSessionPageState extends State<StartSessionPage> {
   String _selectedExercise = 'Select an exercise';
   Color _buttonColor = Colors.blue;
+  bool _exerciseEnded = false;
+  bool _timerStarted = false;
+  int _timeElapsed = 0;
+  int _completedReps = 0;
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -502,13 +529,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
-
-                                //_write('pushups', '6');
-                                _record(_selectedExercise, 1, 1);
-                                _record(_selectedExercise, 2, 2);
-                                _record(_selectedExercise, 3, 3);
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                           ListTile(
@@ -517,10 +540,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Situps';
                                 _buttonColor = Colors.green;
-                                //_write('pushups', '6');
-                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                           ListTile(
@@ -529,10 +551,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Squats';
                                 _buttonColor = Colors.orange;
-                                //_write('pushups', '6');
-                                _record(_selectedExercise, 1, 1);
                               });
                               Navigator.pop(context);
+                              _showStartOptions();
                             },
                           ),
                         ],
@@ -549,22 +570,186 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 primary: _buttonColor,
               ),
             ),
+            const SizedBox(height: 16),
+            Text(
+              _formatTime(_timeElapsed),
+              style: const TextStyle(fontSize: 32),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _timerStarted = !_timerStarted;
+                });
+                _timerStarted ? _startTimer() : _stopTimer();
+              },
+              child: Text(
+                _timerStarted ? 'Stop' : 'Start',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _exerciseEnded ? null : _endExercise,
+              child: const Text('End Exercise'),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-void _record(String exercise, int session, int reps) {
-  if (exercise == 'Pushups') {
-    Hive.openBox(exercise);
-    Pushups.put(session, reps);
-  } else if (exercise == 'Situps') {
-    Hive.openBox(exercise);
-    Situps.put(session, reps);
-  } else if (exercise == 'Squats') {
-    Hive.openBox(exercise);
-    Squats.put(session, reps);
+  String _formatTime(int seconds) {
+    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$remainingSeconds';
+  }
+
+  void _startTimer() {
+    if (_timer == null) {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          _timeElapsed++;
+        });
+      });
+    }
+  }
+
+  void _stopTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+    }
+  }
+
+  void _showStartOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Start options'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: const Text('Start manually'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _startManually();
+                },
+              ),
+              ListTile(
+                title: const Text('Activate voice start'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _activateVoiceStart();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _startManually() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Manual start'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  _startTimer();
+                  setState(() {
+                    _timerStarted;
+                  });
+                },
+                child: const Text('Start exercise'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _endExercise() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Enter the number of reps completed"),
+          content: TextFormField(
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a number';
+              }
+              final reps = int.tryParse(value);
+              if (reps == null || reps <= 0) {
+                return 'Please enter a positive number';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              setState(() {
+                _exerciseEnded = true;
+                _completedReps = int.parse(value!);
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // Exit the alert box
+              });
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _record('Pushups', 1, 1);
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // Exit the alert box
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final form = Form.of(context);
+                if (form != null && form.validate()) {
+                  form.save();
+                }
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _activateVoiceStart() {
+    // Code to activate voice start feature goes here
+  }
+  void _record(String exercise, int session, int reps) {
+    if (exercise == 'Pushups') {
+      Hive.openBox(exercise);
+      Pushups.put(session, reps);
+    } else if (exercise == 'Situps') {
+      Hive.openBox(exercise);
+      Situps.put(session, reps);
+    } else if (exercise == 'Squats') {
+      Hive.openBox(exercise);
+      Squats.put(session, reps);
+    }
+  }
+
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
   }
 }
