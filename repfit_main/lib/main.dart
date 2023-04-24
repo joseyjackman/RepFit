@@ -1,6 +1,8 @@
 /*-----------------------------------------------------------------------------------------
                                 Imports
 -----------------------------------------------------------------------------------------*/
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 
 import 'package:english_words/english_words.dart';
@@ -20,10 +22,31 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+// Create variables for the three exercises
+var Pushups = Hive.box('Pushups');
+var Situps = Hive.box('Situps');
+var Squats = Hive.box('Squats');
+
 //data storage
 
-void main() async {
+//write to file infrastructure below:
+
+void _record(String exercise, int session, int reps) {
+  if (exercise == 'Pushups') {
+    Hive.openBox(exercise);
+    Pushups.put(session, reps);
+  } else if (exercise == 'Situps') {
+    Hive.openBox(exercise);
+    Situps.put(session, reps);
+  } else if (exercise == 'Squats') {
+    Hive.openBox(exercise);
+    Squats.put(session, reps);
+  }
+}
+
+Future main() async {
   //await Hive.initFlutter();
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -533,43 +556,121 @@ class ExerciseDatabase extends StatelessWidget {
 /*-----------------------------------------------------------------------------------------
                             Start of History Page Class
 -----------------------------------------------------------------------------------------*/
-class HistoryPage extends StatelessWidget {
+Future<List<ChartData>> makeList(String input) async {
+  List<ChartData> chartData = [];
+
+  var box = await Hive.openBox(input);
+  int j = 1;
+  int length = 0;
+  //establish length of box
+  while (box.get(j.toInt()) != null) {
+    length = length + 1;
+    chartData.add(ChartData(j, box.get(j).toInt()));
+    j = j + 1;
+  }
+
+  /*for (int i = 1; i <= length; i++) {
+    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
+  }*/
+  //print(box.get(100));
+
+  return chartData;
+}
+
+//converted to stateful to allow a call of "setstate()" within the elevatedbutton refresh in bottom of column.
+class HistoryPage extends StatefulWidget {
   @override
-  //making temp arraylist of "exercise" objects for chart testing
-  String now = DateTime.now().toString();
-  List<Exercise> userProgress = [
-    Exercise(name: "push-ups", reps: 0, excTime: 0, currentTime: "now")
-  ];
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  String exercise = 'PushUps';
+
+  //declare box vars to avoid annoying errors and provide access
+  var Pushups = Hive.openBox('Pushups');
+
+  var Situps = Hive.openBox('Situps');
+
+  var Squats = Hive.openBox('Squats');
+
+  //end
+  Future<List<ChartData>> _fetchChartData() async {
+    final data = await makeList(exercise);
+    return data;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-        //child: Text('TEST'),
-        child: Container(
-            child: SfCartesianChart(
-                //title
-                title: ChartTitle(text: 'Pushups'),
-                // Initialize category axis
-                primaryXAxis: CategoryAxis(),
-                series: <ChartSeries>[
-          // Initialize line series
-          LineSeries<ChartData, String>(
-              dataSource: [
-                // Bind data source
-                ChartData('week 1', 35),
-                ChartData('week 2', 28),
-                ChartData('week 3', 34),
-                ChartData('week 4', 32),
-                ChartData('week 5', 40)
-              ],
-              xValueMapper: (ChartData data, _) => data.x,
-              yValueMapper: (ChartData data, _) => data.y)
-        ])));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pushups History'),
+        //title: Text(Hive.openBox('Pushups').get(1).toString()),
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            child: FutureBuilder<List<ChartData>>(
+              future: _fetchChartData(),
+              builder: (coCategoryAxisntext, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  final data = snapshot.data!;
+                  return SfCartesianChart(
+                    primaryXAxis: NumericAxis(),
+                    series: <LineSeries<ChartData, int>>[
+                      LineSeries<ChartData, int>(
+                        dataSource: data,
+                        xValueMapper: (ChartData data, _) => data.session,
+                        yValueMapper: (ChartData data, _) => data.reps,
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.pressed)) {
+                    return Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withOpacity(0.5);
+                  }
+                  return null; // Use the component's default.
+                },
+              ),
+            ),
+            child: const Text('Refresh'),
+            onPressed: () {
+              setState(() {});
+              //context;
+
+              // ...
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class ChartData {
-  ChartData(this.x, this.y);
-  final String x;
-  final double? y;
+  int session;
+  int reps;
+
+  ChartData(this.session, this.reps);
+
+  void add(int sessionIn, int repsIn) {
+    reps = repsIn;
+    session = sessionIn; //.toString();
+  }
 }
 
 /*-----------------------------------------------------------------------------------------
@@ -627,6 +728,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             title: const Text('Pushups'),
                             onTap: () {
                               setState(() {
+                                _record('Pushups', 1, 1); //TODO REMOVE LATER
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
                                 _stopTimer();
@@ -894,7 +996,4 @@ class _StartSessionPageState extends State<StartSessionPage> {
 
 //write to file infrastructure below:
 
-_record(String exercise, int session, int reps) async {
-  var box = Hive.box(exercise);
-  box.put(session, reps);
-}
+
