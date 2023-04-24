@@ -551,13 +551,22 @@ class StartSessionPage extends StatefulWidget {
                             Start of _StartSessionPageState Class
 -----------------------------------------------------------------------------------------*/
 class _StartSessionPageState extends State<StartSessionPage> {
-  String _selectedExercise = 'Select an exercise';
-  Color _buttonColor = Colors.blue;
-  bool _exerciseEnded = false;
-  bool _timerStarted = false;
-  int _timeElapsed = 0;
-  int _completedReps = 0;
-  Timer? _timer;
+  String _selectedExercise = 'Select an exercise'; // Default exercise selection
+  Color _buttonColor = Colors.blue; // Default button color
+  bool _exerciseEnded =
+      false; // Boolean flag to indicate if the exercise has ended
+  bool _timerStarted =
+      false; // Boolean flag to indicate if the exercise has ended
+  int _timeElapsed = 0; // Time elapsed in seconds
+  int _completedReps = 0; // Number of completed repetitions
+  Duration _timerDuration =
+      Duration(hours: 24); // Maximum duration for the timer
+  bool _timerExpired =
+      false; // Boolean flag to indicate if the timer has expired
+  bool _exerciseInProgress =
+      false; // Boolean flag to indicate if the exercise is in progress
+  int _repetitionsCompleted = 0; // Number of repetitions completed
+  Timer? _timer; // Timer instance, nullable because it may be null
 
   @override
   Widget build(BuildContext context) {
@@ -585,6 +594,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -596,6 +608,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Situps';
                                 _buttonColor = Colors.green;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -607,6 +622,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Squats';
                                 _buttonColor = Colors.orange;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -647,16 +665,27 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 primary: Colors.grey,
               ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _exerciseEnded ? null : _endExercise,
-              child: const Text('End Exercise'),
-            ),
+            // Button to end exercise and save repetitions completed
+            if (_exerciseInProgress)
+              ElevatedButton(
+                onPressed: () {
+                  _stopExercise();
+                  _showRepetitionsDialog();
+                },
+                child: const Text('End Exercise'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(253, 243, 242, 0.738),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
+
+  /*-----------------------------------------------------------------------------------------
+                            Start of _formatTime Method
+  -----------------------------------------------------------------------------------------*/
 
   String _formatTime(int seconds) {
     final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
@@ -664,16 +693,20 @@ class _StartSessionPageState extends State<StartSessionPage> {
     return '$minutes:$remainingSeconds';
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _startTimer Method
+  -----------------------------------------------------------------------------------------*/
   void _startTimer() {
-    if (_timer == null) {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          _timeElapsed++;
-        });
+    _timer ??= Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _timeElapsed++;
       });
-    }
+    });
   }
 
+  /*-----------------------------------------------------------------------------------------
+                              Start of _stopTimer Method
+  -----------------------------------------------------------------------------------------*/
   void _stopTimer() {
     if (_timer != null) {
       _timer!.cancel();
@@ -681,6 +714,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
     }
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _ShowStartOptions Method
+  -----------------------------------------------------------------------------------------*/
   void _showStartOptions() {
     showDialog(
       context: context,
@@ -711,6 +747,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _startManually Method
+  -----------------------------------------------------------------------------------------*/
   void _startManually() {
     showDialog(
       context: context,
@@ -724,8 +763,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 onPressed: () {
                   _startTimer();
                   setState(() {
+                    _exerciseInProgress = true;
                     _timerStarted;
                   });
+                  Navigator.pop(context);
                 },
                 child: const Text('Start exercise'),
               ),
@@ -736,49 +777,56 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
-  void _endExercise() {
+  /*-----------------------------------------------------------------------------------------
+                              Start of _StopExercise Method
+  -----------------------------------------------------------------------------------------*/
+  void _stopExercise() {
+    _stopTimer();
+    setState(() {
+      _exerciseInProgress = false;
+    });
+  }
+
+  /*-----------------------------------------------------------------------------------------
+                            Start of _showRepetitionDialog Method
+  -----------------------------------------------------------------------------------------*/
+  void _showRepetitionsDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Enter the number of reps completed"),
-          content: TextFormField(
+          title: const Text('Repetitions Completed'),
+          content: TextField(
             keyboardType: TextInputType.number,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a number';
-              }
-              final reps = int.tryParse(value);
-              if (reps == null || reps <= 0) {
-                return 'Please enter a positive number';
-              }
-              return null;
-            },
-            onSaved: (value) {
+            onChanged: (value) {
               setState(() {
-                _exerciseEnded = true;
-                _completedReps = int.parse(value!);
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // Exit the alert box
+                _repetitionsCompleted = int.tryParse(value) ?? 0;
               });
             },
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // Exit the alert box
+                Navigator.pop(context);
+                _startTimer();
+                setState(() {
+                  _timerStarted = true;
+                  _exerciseInProgress = true;
+                });
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
-                final form = Form.of(context);
-                if (form != null && form.validate()) {
-                  form.save();
-                }
+                setState(() {
+                  _repetitionsCompleted += _completedReps;
+                  _exerciseInProgress = false;
+                  _timerStarted = false;
+                  _timeElapsed = 0; // Reset the timer to 0
+                });
+                Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -786,6 +834,17 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _saveRepetitions Method
+  -----------------------------------------------------------------------------------------*/
+  void _saveRepetitions() {
+    // TODO: save the repetitions completed
+    print('Repetitions Completed: $_repetitionsCompleted');
+  }
+
+  /*-----------------------------------------------------------------------------------------
+                            Start of _activateVoiceStart Method
+  -----------------------------------------------------------------------------------------*/
   void _activateVoiceStart() {
     // Code to activate voice start feature goes here
   }
