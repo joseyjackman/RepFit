@@ -20,6 +20,10 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+var Pushups = Hive.box('Pushups');
+var Situps = Hive.box('Situps');
+var Squats = Hive.box('Squats');
+
 //data storage
 
 void main() async {
@@ -209,7 +213,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     if (selectedIndex == 0) SizedBox(height: 1),
                     Expanded(child: page),
-                    Text('TEST')
                   ],
                 ),
               ),
@@ -760,6 +763,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                   setState(() {
                     _timerStarted;
                   });
+                  Navigator.pop(context);
                 },
                 child: const Text('Start exercise'),
               ),
@@ -833,7 +837,20 @@ class _StartSessionPageState extends State<StartSessionPage> {
 
 //write to file infrastructure below:
 
-_record(String exercise, int session, int reps) async {
+/* _record(String exercise, int session, int reps) async {
   var box = Hive.box(exercise);
   box.put(session, reps);
+} */
+
+void _record(String exercise, int session, int reps) {
+  if (exercise == 'Pushups') {
+    Hive.openBox(exercise);
+    Pushups.put(session, reps);
+  } else if (exercise == 'Situps') {
+    Hive.openBox(exercise);
+    Situps.put(session, reps);
+  } else if (exercise == 'Squats') {
+    Hive.openBox(exercise);
+    Squats.put(session, reps);
+  }
 }
