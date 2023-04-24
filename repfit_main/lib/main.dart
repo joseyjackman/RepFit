@@ -370,17 +370,18 @@ class ExerciseDatabase extends StatelessWidget {
 }
 
 Future<List<ChartData>> makeList(String input) async {
-  print("running makelist future");
   List<ChartData> chartData = [];
 
   var box = await Hive.openBox(input);
-  int j = 0;
+  int j = 1;
   int length = 0;
   //establish length of box
   while (box.get(j.toInt()) != null) {
     length = length + 1;
-    chartData.add(ChartData(j.toString(), box.get(j).toInt()));
+    chartData.add(ChartData(j, box.get(j).toInt()));
+    j = j + 1;
   }
+
   /*for (int i = 1; i <= length; i++) {
     chartData.add(ChartData(i.toString(), box.get(i).toInt()));
   }*/
@@ -424,7 +425,7 @@ class _HistoryPageState extends State<HistoryPage> {
             padding: EdgeInsets.all(16),
             child: FutureBuilder<List<ChartData>>(
               future: _fetchChartData(),
-              builder: (context, snapshot) {
+              builder: (coCategoryAxisntext, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -432,9 +433,9 @@ class _HistoryPageState extends State<HistoryPage> {
                 } else {
                   final data = snapshot.data!;
                   return SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <LineSeries<ChartData, String>>[
-                      LineSeries<ChartData, String>(
+                    primaryXAxis: NumericAxis(),
+                    series: <LineSeries<ChartData, int>>[
+                      LineSeries<ChartData, int>(
                         dataSource: data,
                         xValueMapper: (ChartData data, _) => data.session,
                         yValueMapper: (ChartData data, _) => data.reps,
@@ -474,14 +475,14 @@ class _HistoryPageState extends State<HistoryPage> {
 }
 
 class ChartData {
-  String session;
+  int session;
   int reps;
 
   ChartData(this.session, this.reps);
 
   void add(int sessionIn, int repsIn) {
     reps = repsIn;
-    session = sessionIn.toString();
+    session = sessionIn; //.toString();
   }
 }
 
@@ -711,6 +712,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
             TextButton(
               onPressed: () {
                 _record('Pushups', 1, 1);
+                _record('Pushups', 2, 2);
+                _record('Pushups', 3, 3);
                 Navigator.of(context, rootNavigator: true)
                     .pop(); // Exit the alert box
               },
