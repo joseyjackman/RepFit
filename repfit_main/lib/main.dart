@@ -1,20 +1,38 @@
+/*-----------------------------------------------------------------------------------------
+                                Imports
+-----------------------------------------------------------------------------------------*/
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:async';
 
+import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+//charts package:
 import 'package:syncfusion_flutter_charts/charts.dart';
+//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
+
+//early attempt at data persistence/storage:
+import 'user_data.dart';
+//import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+// Create variables for the three exercises
 var Pushups = Hive.box('Pushups');
 var Situps = Hive.box('Situps');
 var Squats = Hive.box('Squats');
+
 //data storage
+
 //write to file infrastructure below:
 
+//checks the entered exercise against a predefined list, as flutter/dart is annoying i have to use these...
+//if the entered exc is matched, the respective box is opened then the data is added to it through ".put()"
 void _record(String exercise, int session, int reps) {
   if (exercise == 'Pushups') {
     Hive.openBox(exercise);
@@ -29,14 +47,18 @@ void _record(String exercise, int session, int reps) {
 }
 
 Future main() async {
+  //await Hive.initFlutter();
   await Hive.initFlutter();
   runApp(MyApp());
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyApp Class
+-----------------------------------------------------------------------------------------*/
 class MyApp extends StatelessWidget {
   //initialize boxes
-
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -53,12 +75,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyAppState Class
+-----------------------------------------------------------------------------------------*/
 class MyAppState extends ChangeNotifier {
+  var current = WordPair.random();
+
+  void getNext() {
+    current = WordPair.random();
+    notifyListeners();
+  }
+
   var backgroundColors = {
-    'Generator': Color.fromARGB(255, 163, 214, 255),
-    'Tutorial': Color.fromARGB(255, 255, 244, 193),
+    'Generator': Color.fromARGB(255, 192, 255, 216),
+    'Tutorial': Color.fromARGB(255, 163, 214, 255),
     'Exercise Database': Color.fromARGB(255, 236, 192, 255),
-    'History': Color.fromARGB(255, 192, 255, 216),
+    'History': Color.fromARGB(255, 255, 244, 193),
     'Start Session': Color.fromARGB(255, 255, 192, 192),
   };
 
@@ -71,11 +103,17 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of MyHomePage Class
+-----------------------------------------------------------------------------------------*/
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of _MyHomePageState Class
+-----------------------------------------------------------------------------------------*/
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
@@ -86,12 +124,14 @@ class _MyHomePageState extends State<MyHomePage> {
     'History',
     'Start Session',
   ];
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pageName = pageNames[selectedIndex];
     appState.backgroundColor = appState.backgroundColors[pageName] ??
         Color.fromARGB(255, 163, 214, 255); // default background color
+
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -167,18 +207,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Expanded(
               child: Container(
+                padding: const EdgeInsets.all(10),
                 color: appState.backgroundColor,
                 child: Column(
                   children: [
                     if (selectedIndex == 0)
                       Expanded(
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          fit: BoxFit.cover,
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/logo.png',
+                              height: 200,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Container(
+                                padding:
+                                    const EdgeInsets.only(top: 40, bottom: 40),
+                                child: const Text(
+                                  'MISSION STATEMENT',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                            Text(
+                              'Our mission is to allow users to develop a synergy with our app, creating a positive feedback loop in which the user will calendarise progress via gamification, leading to a more robust lifestyle.',
+                              textAlign: TextAlign.center,
+                            ),
+                            Image.asset(
+                              'assets/images/whiteboys.png',
+                              height: 200,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Container(
+                                padding:
+                                    const EdgeInsets.only(top: 40, bottom: 40),
+                                child: const Text(
+                                  'ABOUT THE FOUNDERS',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                            Text(
+                                'RepFit was founded by Hunter Odom, Austin Jackman, and Raymond Riddell, three young Computer Science majors with a passion for both exercise and helping others. Filler text filler text filler text filler text.')
+                          ],
                         ),
                       ),
-                    if (selectedIndex == 0) SizedBox(height: 16),
+                    if (selectedIndex == 0) SizedBox(height: 1),
                     Expanded(child: page),
+                    Text('TEST')
                   ],
                 ),
               ),
@@ -190,10 +266,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of GeneratorPage Class
+-----------------------------------------------------------------------------------------*/
 class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var pair = appState.current;
 
     return Center(
       child: Column(
@@ -203,45 +283,152 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-      ),
-    );
-  }
-}
-
+/*-----------------------------------------------------------------------------------------
+                            Start of TutorialPage Class
+-----------------------------------------------------------------------------------------*/
 class TutorialPage extends StatelessWidget {
+  //begin modifications to add a youtube player:
+  //video ids below:
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    Widget intro = Container(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'INTRO',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                Text(
+                    'Welcome to the RepFit fitness app! This page will show you exactly what your options are to navigate this app, as well as what each option means. Aside from this Tutorial page, there are 4 other pages: The Home page, the Exercise Database, the History page, and the Start Session page.')
+              ],
+            ))
+          ],
+        ));
+
+    Widget home = Container(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'HOME',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                Text(
+                    'The function of the Home page is to serve as an introduction to the rest of the RepFit app. There, you will find an introduction to RepFit\'s founders, as well as our mission statement.')
+              ],
+            ))
+          ],
+        ));
+
+    Widget exercisedatabase = Container(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'EXERCISE DATABASE',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                Text(
+                    'The Exercise Database your one-stop shop for all your exercise questions. Conatining both videos and a text description of every exercise we track in the RepFit app, the database allows you to either begin new forms of exercise, or else brush up on your existing technique.')
+              ],
+            ))
+          ],
+        ));
+
+    Widget history = Container(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'HISTORY',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                Text(
+                    'In order to view your fitness progress, head over to the History page. As you complete more exercise sessions, the graph will increase in detail, allowing you to see your exact rate of improvement for each exercise.')
+              ],
+            ))
+          ],
+        ));
+
+    Widget startsession = Container(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: const Text(
+                      'START SESSION',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                Text(
+                    'Last, but certainly not least, is the Start Session page, where you\'ll actually record your progress each time you work out. After navigating to the Start Session page, you\'ll be able to select the exercise you\'d like to do. After completing the exercise, simply enter the number of repetitions, and voila! The number will be automatically stored in the History tab, to be viewed next time you\'re over there.')
+              ],
+            ))
+          ],
+        ));
+
+    /*if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }*/
 
     return ListView(
       children: [
-        Center(child: new Text('Squats: ')),
-        Image.asset('assets/database_vids/squat.gif'),
-        Center(child: new Text('Push-Ups:')),
-        Image.asset('assets/database_vids/pushup.gif'),
-        Center(child: new Text('Sit-Ups: ')),
-        Image.asset('assets/database_vids/situp.gif'),
+        intro,
+        home,
+        exercisedatabase,
+        history,
+        startsession,
       ],
     );
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of ExerciseDatabase Class
+-----------------------------------------------------------------------------------------*/
 class ExerciseDatabase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -387,18 +574,31 @@ class ExerciseDatabase extends StatelessWidget {
   }
 }
 
-//this future makes an empty list of chartdata objects, assigns the now opened box of selected exercise to "box",
-//loops through all non-null elements of the list, and returns the list once it reaches a null element.
+/*-----------------------------------------------------------------------------------------
+                            Start of History Page Class
+-----------------------------------------------------------------------------------------*/
+/* this future makes an empty list of chartdata objects and assigns the now opened box of 
+   selected exercise to "box", loops through all non-null elements of the list, and returns 
+                the list once it reaches a null element. */
+
 Future<List<ChartData>> makeList(String input) async {
   List<ChartData> chartData = [];
 
   var box = await Hive.openBox(input);
   int j = 1;
+  int length = 0;
   //establish length of box
   while (box.get(j.toInt()) != null) {
+    length = length + 1;
     chartData.add(ChartData(j, box.get(j).toInt()));
     j = j + 1;
   }
+
+  /*for (int i = 1; i <= length; i++) {
+    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
+  }*/
+  //print(box.get(100));
+
   return chartData;
 }
 
@@ -413,7 +613,9 @@ class _HistoryPageState extends State<HistoryPage> {
 
   //declare box vars to avoid annoying errors and provide access
   var Pushups = Hive.openBox('Pushups');
+
   var Situps = Hive.openBox('Situps');
+
   var Squats = Hive.openBox('Squats');
 
   //end
@@ -481,6 +683,7 @@ class _HistoryPageState extends State<HistoryPage> {
             onPressed: () {
               //sets state back to default.
               setState(() {});
+              //context;
             },
           ),
         ],
@@ -501,8 +704,12 @@ class ChartData {
   }
 }
 
+/*-----------------------------------------------------------------------------------------
+                            Start of StartSessionPage Class
+-----------------------------------------------------------------------------------------*/
 class StartSessionPage extends StatefulWidget {
   const StartSessionPage({Key? key}) : super(key: key);
+
   @override
   _StartSessionPageState createState() => _StartSessionPageState();
 }
@@ -511,13 +718,22 @@ class StartSessionPage extends StatefulWidget {
                             Start of _StartSessionPageState Class
 -----------------------------------------------------------------------------------------*/
 class _StartSessionPageState extends State<StartSessionPage> {
-  String _selectedExercise = 'Select an exercise';
-  Color _buttonColor = Colors.blue;
-  bool _exerciseEnded = false;
-  bool _timerStarted = false;
-  int _timeElapsed = 0;
-  int _completedReps = 0;
-  Timer? _timer;
+  String _selectedExercise = 'Select an exercise'; // Default exercise selection
+  Color _buttonColor = Colors.blue; // Default button color
+  bool _exerciseEnded =
+      false; // Boolean flag to indicate if the exercise has ended
+  bool _timerStarted =
+      false; // Boolean flag to indicate if the exercise has ended
+  int _timeElapsed = 0; // Time elapsed in seconds
+  int _completedReps = 0; // Number of completed repetitions
+  Duration _timerDuration =
+      Duration(hours: 24); // Maximum duration for the timer
+  bool _timerExpired =
+      false; // Boolean flag to indicate if the timer has expired
+  bool _exerciseInProgress =
+      false; // Boolean flag to indicate if the exercise is in progress
+  int _repetitionsCompleted = 0; // Number of repetitions completed
+  Timer? _timer; // Timer instance, nullable because it may be null
 
   @override
   Widget build(BuildContext context) {
@@ -543,8 +759,12 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             title: const Text('Pushups'),
                             onTap: () {
                               setState(() {
+                                _record('Pushups', 1, 1); //TODO REMOVE LATER
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -556,6 +776,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Situps';
                                 _buttonColor = Colors.green;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -567,6 +790,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               setState(() {
                                 _selectedExercise = 'Squats';
                                 _buttonColor = Colors.orange;
+                                _stopTimer();
+                                _timerStarted = false;
+                                _timeElapsed = 0; // Reset the timer to 0
                               });
                               Navigator.pop(context);
                               _showStartOptions();
@@ -607,33 +833,49 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 primary: Colors.grey,
               ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _exerciseEnded ? null : _endExercise,
-              child: const Text('End Exercise'),
-            ),
+            // Button to end exercise and save repetitions completed
+            if (_exerciseInProgress)
+              ElevatedButton(
+                onPressed: () {
+                  _stopExercise();
+                  _showRepetitionsDialog();
+                },
+                child: const Text('End Exercise'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(253, 243, 242, 0.738),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _formatTime Method
+  -----------------------------------------------------------------------------------------*/
+
   String _formatTime(int seconds) {
-    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final hours = (seconds ~/ 3600).toString().padLeft(2, '0');
+    final minutes = ((seconds ~/ 60) % 60).toString().padLeft(2, '0');
     final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$remainingSeconds';
+    return '$hours:$minutes:$remainingSeconds';
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _startTimer Method
+  -----------------------------------------------------------------------------------------*/
   void _startTimer() {
-    if (_timer == null) {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          _timeElapsed++;
-        });
+    _timer ??= Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _timeElapsed++;
       });
-    }
+    });
   }
 
+  /*-----------------------------------------------------------------------------------------
+                              Start of _stopTimer Method
+  -----------------------------------------------------------------------------------------*/
   void _stopTimer() {
     if (_timer != null) {
       _timer!.cancel();
@@ -641,6 +883,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
     }
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _ShowStartOptions Method
+  -----------------------------------------------------------------------------------------*/
   void _showStartOptions() {
     showDialog(
       context: context,
@@ -671,6 +916,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _startManually Method
+  -----------------------------------------------------------------------------------------*/
   void _startManually() {
     showDialog(
       context: context,
@@ -684,8 +932,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 onPressed: () {
                   _startTimer();
                   setState(() {
+                    _exerciseInProgress = true;
                     _timerStarted;
                   });
+                  Navigator.pop(context);
                 },
                 child: const Text('Start exercise'),
               ),
@@ -696,55 +946,56 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
-  void _endExercise() {
-    int finalreps = 0;
+  /*-----------------------------------------------------------------------------------------
+                              Start of _StopExercise Method
+  -----------------------------------------------------------------------------------------*/
+  void _stopExercise() {
+    _stopTimer();
+    setState(() {
+      _exerciseInProgress = false;
+    });
+  }
+
+  /*-----------------------------------------------------------------------------------------
+                            Start of _showRepetitionDialog Method
+  -----------------------------------------------------------------------------------------*/
+  void _showRepetitionsDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Enter the number of reps completed"),
-          content: TextFormField(
+          title: const Text('Repetitions Completed'),
+          content: TextField(
             keyboardType: TextInputType.number,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a number';
-              }
-              final reps = int.tryParse(value);
-              if (reps == null || reps <= 0) {
-                return 'Please enter a positive number';
-              }
-              finalreps = reps;
-              return null;
-            },
-            onSaved: (value) {
+            onChanged: (value) {
               setState(() {
-                _exerciseEnded = true;
-                _completedReps = int.parse(value!);
-                //finalreps = _completedReps;
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // Exit the alert box
+                _repetitionsCompleted = int.tryParse(value) ?? 0;
               });
             },
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(); // Exit the alert box
+                Navigator.pop(context);
+                _startTimer();
+                setState(() {
+                  _timerStarted = true;
+                  _exerciseInProgress = true;
+                });
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
-                _record(_selectedExercise, 1, finalreps);
-                _record(_selectedExercise, 2, finalreps);
-                _record(_selectedExercise, 3, finalreps);
-                final form = Form.of(context);
-                if (form != null && form.validate()) {
-                  form.save();
-                }
+                setState(() {
+                  _repetitionsCompleted += _completedReps;
+                  _exerciseInProgress = false;
+                  _timerStarted = false;
+                  _timeElapsed = 0; // Reset the timer to 0
+                });
+                Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -752,22 +1003,19 @@ class _StartSessionPageState extends State<StartSessionPage> {
     );
   }
 
+  /*-----------------------------------------------------------------------------------------
+                            Start of _saveRepetitions Method
+  -----------------------------------------------------------------------------------------*/
+  void _saveRepetitions() {
+    // TODO: save the repetitions completed
+    print('Repetitions Completed: $_repetitionsCompleted');
+  }
+
+  /*-----------------------------------------------------------------------------------------
+                            Start of _activateVoiceStart Method
+  -----------------------------------------------------------------------------------------*/
   void _activateVoiceStart() {
     // Code to activate voice start feature goes here
-  }
-  //checks the entered exercise against a predefined list, as flutter/dart is annoying i have to use these...
-  //if the entered exc is matched, the respective box is opened then the data is added to it through ".put()"
-  void _record(String exercise, int session, int reps) {
-    if (exercise == 'Pushups') {
-      Hive.openBox(exercise);
-      Pushups.put(session, reps);
-    } else if (exercise == 'Situps') {
-      Hive.openBox(exercise);
-      Situps.put(session, reps);
-    } else if (exercise == 'Squats') {
-      Hive.openBox(exercise);
-      Squats.put(session, reps);
-    }
   }
 
   @override
@@ -776,3 +1024,5 @@ class _StartSessionPageState extends State<StartSessionPage> {
     super.dispose();
   }
 }
+
+//write to file infrastructure below:
