@@ -679,6 +679,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
   }
 
   void _endExercise() {
+    int finalreps = 0;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -694,12 +695,14 @@ class _StartSessionPageState extends State<StartSessionPage> {
               if (reps == null || reps <= 0) {
                 return 'Please enter a positive number';
               }
+              finalreps = reps;
               return null;
             },
             onSaved: (value) {
               setState(() {
                 _exerciseEnded = true;
                 _completedReps = int.parse(value!);
+                //finalreps = _completedReps;
                 Navigator.of(context, rootNavigator: true)
                     .pop(); // Exit the alert box
               });
@@ -708,10 +711,6 @@ class _StartSessionPageState extends State<StartSessionPage> {
           actions: [
             TextButton(
               onPressed: () {
-                _record('Pushups', 1, 1);
-                _record('Pushups', 2, 2);
-                _record('Pushups', 3, 3);
-                _record('Pushups', 4, 3);
                 Navigator.of(context, rootNavigator: true)
                     .pop(); // Exit the alert box
               },
@@ -719,6 +718,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
             ),
             ElevatedButton(
               onPressed: () {
+                _record(_selectedExercise, 1, finalreps);
+                _record(_selectedExercise, 2, finalreps);
+                _record(_selectedExercise, 3, finalreps);
                 final form = Form.of(context);
                 if (form != null && form.validate()) {
                   form.save();
