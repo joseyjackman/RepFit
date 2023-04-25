@@ -155,23 +155,36 @@ class _MyHomePageState extends State<MyHomePage> {
       return Scaffold(
         body: Row(
           children: [
+            /*-------------------------------------------------------------------------------------------------------*/
+            /*                 The following NavigationRails are what make up the page sidebar                       */
+            /*-------------------------------------------------------------------------------------------------------*/
             SafeArea(
               child: NavigationRail(
                 extended: constraints.maxWidth >= 600,
+
+                /* Home Navigation Page */
                 destinations: [
                   NavigationRailDestination(
                     icon: Icon(Icons.home),
                     label: Text('Home'),
                   ),
+
+                  /* Tutorial Navigation Page */
                   NavigationRailDestination(
                     icon: Icon(Icons.lightbulb),
                     label: Text('Tutorial'),
                   ),
+
+                  /* Exercise Database Navigation Page */
                   NavigationRailDestination(
                       icon: Icon(Icons.library_books),
                       label: Text('Exercise Database')),
+
+                  /* History Navigation Page */
                   NavigationRailDestination(
                       icon: Icon(Icons.auto_graph), label: Text('History')),
+
+                  /* StartSession Navigation Page */
                   NavigationRailDestination(
                       icon: Icon(Icons.directions_run),
                       label: Text('Start Session'))
@@ -184,6 +197,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
+
+            /*-------------------------------------------------------------------------------------------------------*/
+            /*                 End of NavigationRails that make up the page sidebar                                  */
+            /*-------------------------------------------------------------------------------------------------------*/
+
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(10),
