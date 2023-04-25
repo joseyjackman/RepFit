@@ -581,23 +581,31 @@ class ExerciseDatabase extends StatelessWidget {
    selected exercise to "box", loops through all non-null elements of the list, and returns 
                 the list once it reaches a null element. */
 
-Future<List<ChartData>> makeList(String input) async {
-  List<ChartData> chartData = [];
+Future<List<ChartData>> makeList(String exercise) async {
+  final box = await Hive.openBox(exercise);
 
-  var box = await Hive.openBox(input);
-  int j = 1;
-  int length = 0;
-  //establish length of box
-  while (box.get(j.toInt()) != null) {
-    length = length + 1;
-    chartData.add(ChartData(j, box.get(j).toInt()));
-    j = j + 1;
+  final chartData = <ChartData>[];
+  for (int i = 1; i <= box.length; i++) {
+    final reps = box.get(i).toInt();
+    chartData.add(ChartData(i, reps));
   }
 
-  /*for (int i = 1; i <= length; i++) {
-    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
-  }*/
-  //print(box.get(100));
+  return chartData;
+}
+
+Future<List<ChartData>> _fetchChartData(String exercise) async {
+  final pushupData = await makeList('PushUps');
+  final situpData = await makeList('SitUps');
+  final squatData = await makeList('Squats');
+
+  List<ChartData> chartData = [];
+  if (exercise == 'PushUps') {
+    chartData = pushupData;
+  } else if (exercise == 'SitUps') {
+    chartData = situpData;
+  } else if (exercise == 'Squats') {
+    chartData = squatData;
+  }
 
   return chartData;
 }
@@ -609,53 +617,32 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  String exercise = 'PushUps';
-
-  //declare box vars to avoid annoying errors and provide access
-  var Pushups = Hive.openBox('Pushups');
-
-  var Situps = Hive.openBox('Situps');
-
-  var Squats = Hive.openBox('Squats');
-
-  //end
-  //future simply declares that there will be a list of chartdata objects and returns it when available.
-  Future<List<ChartData>> _fetchChartData() async {
-    final data = await makeList(exercise);
-    return data;
-  }
+  String exercise = 'Pushups';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pushups History'),
-        //title: Text(Hive.openBox('Pushups').get(1).toString()),
+        title: Text('$exercise History'),
       ),
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(16),
             child: FutureBuilder<List<ChartData>>(
-              //establishes use of the chartdata type
-              future: _fetchChartData(),
-              builder: (coCategoryAxisntext, snapshot) {
-                //through snapshot, each element returned from the list of chartdata elemenets is referenced sequentially.
+              future: _fetchChartData(exercise),
+              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  //each data point from the snapshot is referenced and saved into the variable "Data"
                   final data = snapshot.data!;
                   return SfCartesianChart(
-                    //originally category based but didnt work right(BELOW) (updated: it does work and eliminated the decimals from sessions)
                     primaryXAxis: CategoryAxis(),
-                    //lineseries establishes the line graph format and the subsequent int declarations declare the awaited data types.
                     series: <LineSeries<ChartData, int>>[
                       LineSeries<ChartData, int>(
                         dataSource: data,
-                        //from each ChartData object, the separate session and rep integers are pulled for display
                         xValueMapper: (ChartData data, _) => data.session,
                         yValueMapper: (ChartData data, _) => data.reps,
                       ),
@@ -665,26 +652,43 @@ class _HistoryPageState extends State<HistoryPage> {
               },
             ),
           ),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  if (states.contains(MaterialState.pressed)) {
-                    return Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withOpacity(0.5);
-                  }
-                  return null; // Use the component's default.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    exercise = 'Pushups';
+                  });
                 },
+                child: Text('Pushups'),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    exercise = 'Situps';
+                  });
+                },
+                child: Text('Situps'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    exercise = 'Squats';
+                  });
+                },
+                child: Text('Squats'),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 50, left: 22),
+            child: ElevatedButton(
+              child: const Text('Refresh'),
+              onPressed: () {
+                setState(() {});
+              },
             ),
-            child: const Text('Refresh'),
-            onPressed: () {
-              //sets state back to default.
-              setState(() {});
-              //context;
-            },
           ),
         ],
       ),
