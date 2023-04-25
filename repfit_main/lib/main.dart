@@ -737,28 +737,35 @@ class _StartSessionPageState extends State<StartSessionPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Returns a Scaffold widget that has an AppBar and a body.
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Start Session'),
+        title: const Text(
+            'Start Session'), // Sets the title of the AppBar to 'Start Session'.
       ),
       body: Center(
+        // The body contains a Column widget with centered children.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
+                // Displays a dialog when the button is pressed.
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: const Text('Select an exercise'),
+                      title: const Text(
+                          'Select an exercise'), // Sets the title of the dialog.
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           ListTile(
-                            title: const Text('Pushups'),
+                            title: const Text(
+                                'Pushups'), // The text for the first option.
                             onTap: () {
                               setState(() {
+                                // Sets the selected exercise to 'Pushups' and the button color to red.
                                 _record('Pushups', 1, 1); //TODO REMOVE LATER
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
@@ -771,9 +778,11 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             },
                           ),
                           ListTile(
-                            title: const Text('Situps'),
+                            title: const Text(
+                                'Situps'), // The text for the second option.
                             onTap: () {
                               setState(() {
+                                // Sets the selected exercise to 'Situps' and the button color to green.
                                 _selectedExercise = 'Situps';
                                 _buttonColor = Colors.green;
                                 _stopTimer();
@@ -785,11 +794,13 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             },
                           ),
                           ListTile(
-                            title: const Text('Squats'),
+                            title: const Text(
+                                'Squats'), // The text for the third option.
                             onTap: () {
                               setState(() {
                                 _selectedExercise = 'Squats';
-                                _buttonColor = Colors.orange;
+                                _buttonColor = Colors
+                                    .orange; // Sets the selected exercise to 'Squats' and the button color to orange.
                                 _stopTimer();
                                 _timerStarted = false;
                                 _timeElapsed = 0; // Reset the timer to 0
@@ -805,28 +816,35 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 );
               },
               child: Text(
-                _selectedExercise,
+                _selectedExercise, // The text for the button, which displays the currently selected exercise.
                 style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                primary: _buttonColor,
+                primary:
+                    _buttonColor, // Sets the background color of the button to the selected exercises's color.
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), // Adds some spacing below the button.
             Text(
-              _formatTime(_timeElapsed),
+              _formatTime(
+                  _timeElapsed), // Formats the time elapsed and displays it as text.
               style: const TextStyle(fontSize: 32),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(
+                height: 16), // Adds some spacing below the time text.
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   _timerStarted = !_timerStarted;
                 });
-                _timerStarted ? _startTimer() : _stopTimer();
+                _timerStarted
+                    ? _startTimer()
+                    : _stopTimer(); // Starts or stops the timer when the button is pressed.
               },
               child: Text(
-                _timerStarted ? 'Stop' : 'Start',
+                _timerStarted
+                    ? 'Stop'
+                    : 'Start', // The text for the button changes between 'Start' and 'Stop' depending on wheather the timer is currently counting or not.
                 style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
@@ -866,6 +884,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             Start of _startTimer Method
   -----------------------------------------------------------------------------------------*/
   void _startTimer() {
+    // Initializes the _timer object with a periodic timer that executes every second
+    // and increments the _timeElapsed variable by 1.
     _timer ??= Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _timeElapsed++;
@@ -877,8 +897,11 @@ class _StartSessionPageState extends State<StartSessionPage> {
                               Start of _stopTimer Method
   -----------------------------------------------------------------------------------------*/
   void _stopTimer() {
+    //check if timer object is not null
     if (_timer != null) {
+      // If the timer is not null then cancel the timer
       _timer!.cancel();
+      // set the timer to null
       _timer = null;
     }
   }
@@ -886,7 +909,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
   /*-----------------------------------------------------------------------------------------
                             Start of _ShowStartOptions Method
   -----------------------------------------------------------------------------------------*/
+  // Defines a private function called _showStartOptions()
   void _showStartOptions() {
+    // Shows an AlertDialog with a "Start options" title and two options: "Start manually" and "Activate voice start"
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -898,6 +923,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
               ListTile(
                 title: const Text('Start manually'),
                 onTap: () {
+                  // When the "Start manually" option is tapped, it invokes the _startManually() function and closes the dialog window by calling Navigator.pop(context).
                   Navigator.pop(context);
                   _startManually();
                 },
@@ -905,6 +931,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
               ListTile(
                 title: const Text('Activate voice start'),
                 onTap: () {
+                  // When the "Activate voice start" option is tapped, it invokes the _activateVoiceStart() function and closes the dialog window by calling Navigator.pop(context).
                   Navigator.pop(context);
                   _activateVoiceStart();
                 },
@@ -919,7 +946,14 @@ class _StartSessionPageState extends State<StartSessionPage> {
   /*-----------------------------------------------------------------------------------------
                             Start of _startManually Method
   -----------------------------------------------------------------------------------------*/
+  /* The following method when called shows an AlertDialog with a "Manual start" tile and
+  a single ElevatedButton labeled "Start exercise." When the button is pressed, it calls the
+  private function _startTimer() and sets the boolean _exerciseInProgress to true and the
+  _timerStarted variable. Finally it then closes the dialog window called by Naviagtor.pop(context) */
+
+  // Defines a private function called _startManually()
   void _startManually() {
+    // Shows an AlertDialog with a "Manual start" title and a single ElevatedButton labeled "Start exercise"
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -929,12 +963,14 @@ class _StartSessionPageState extends State<StartSessionPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ElevatedButton(
+                // When the button is pressed, it calls the private function _startTimer() and sets the boolean _exerciseInProgress to true and the _timerStarted variable.
                 onPressed: () {
                   _startTimer();
                   setState(() {
                     _exerciseInProgress = true;
-                    _timerStarted;
+                    _timerStarted; // This should be _timerStarted = true;
                   });
+                  // Finally, it closes the dialog window by calling Navigator.pop(context).
                   Navigator.pop(context);
                 },
                 child: const Text('Start exercise'),
@@ -949,6 +985,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
   /*-----------------------------------------------------------------------------------------
                               Start of _StopExercise Method
   -----------------------------------------------------------------------------------------*/
+  /* The following method stops the timer and sets _exerciseInProgress to false and indicates
+                                the end of an exercise                                     */
   void _stopExercise() {
     _stopTimer();
     setState(() {
@@ -961,22 +999,27 @@ class _StartSessionPageState extends State<StartSessionPage> {
   -----------------------------------------------------------------------------------------*/
   void _showRepetitionsDialog() {
     showDialog(
+      // Use the showDialog method to display the AlertDialog
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          // Return the AlertDialog with given properties
           title: const Text('Repetitions Completed'),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
               setState(() {
+                // Update _repetitionsCompleted with the value from the TextField
                 _repetitionsCompleted = int.tryParse(value) ?? 0;
               });
             },
           ),
           actions: [
             TextButton(
+              // Create Cancel Button
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(
+                    context); // Close dialog box, and set timerStarted and exerciseInProgress to true
                 _startTimer();
                 setState(() {
                   _timerStarted = true;
@@ -986,8 +1029,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
+              // Create Save Button
               onPressed: () {
                 setState(() {
+                  // Update _repetitionsCompleted, exerciseInProgress, timerStarted, timeElapsed
                   _repetitionsCompleted += _completedReps;
                   _exerciseInProgress = false;
                   _timerStarted = false;
