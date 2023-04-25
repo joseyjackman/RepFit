@@ -581,22 +581,22 @@ class ExerciseDatabase extends StatelessWidget {
    selected exercise to "box", loops through all non-null elements of the list, and returns 
                 the list once it reaches a null element. */
 
-Future<List<ChartData>> makeList(String exercise) async {
+Future<List<ChartData>> makeList(String exercise, int session) async {
   final box = await Hive.openBox(exercise);
 
   final chartData = <ChartData>[];
   for (int i = 1; i <= box.length; i++) {
     final reps = box.get(i).toInt();
-    chartData.add(ChartData(i, reps));
+    chartData.add(ChartData(session, reps));
   }
 
   return chartData;
 }
 
 Future<List<ChartData>> _fetchChartData(String exercise) async {
-  final pushupData = await makeList('PushUps');
-  final situpData = await makeList('SitUps');
-  final squatData = await makeList('Squats');
+  final pushupData = await makeList('PushUps', 1);
+  final situpData = await makeList('SitUps', 1);
+  final squatData = await makeList('Squats', 1);
 
   List<ChartData> chartData = [];
   if (exercise == 'PushUps') {
@@ -605,6 +605,11 @@ Future<List<ChartData>> _fetchChartData(String exercise) async {
     chartData = situpData;
   } else if (exercise == 'Squats') {
     chartData = squatData;
+  }
+
+  for (int session = 2; session <= 10; session++) {
+    final data = await makeList(exercise, session);
+    chartData.addAll(data);
   }
 
   return chartData;
@@ -724,17 +729,11 @@ class StartSessionPage extends StatefulWidget {
 class _StartSessionPageState extends State<StartSessionPage> {
   String _selectedExercise = 'Select an exercise'; // Default exercise selection
   Color _buttonColor = Colors.blue; // Default button color
-  bool _exerciseEnded =
-      false; // Boolean flag to indicate if the exercise has ended
-  bool _timerStarted =
+  late bool _timerStarted =
       false; // Boolean flag to indicate if the exercise has ended
   int _timeElapsed = 0; // Time elapsed in seconds
-  int _completedReps = 0; // Number of completed repetitions
-  Duration _timerDuration =
-      Duration(hours: 24); // Maximum duration for the timer
-  bool _timerExpired =
-      false; // Boolean flag to indicate if the timer has expired
-  bool _exerciseInProgress =
+  final int _completedReps = 0; // Number of completed repetitions
+  late bool _exerciseInProgress =
       false; // Boolean flag to indicate if the exercise is in progress
   int _repetitionsCompleted = 0; // Number of repetitions completed
   Timer? _timer; // Timer instance, nullable because it may be null
@@ -1034,7 +1033,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
             ),
             ElevatedButton(
               // Create Save Button
-              onPressed: () {
+              onPressed: () async {
+                final box = await Hive.openBox(_selectedExercise);
+                await box.add(_completedReps);
                 setState(() {
                   // Update _repetitionsCompleted, exerciseInProgress, timerStarted, timeElapsed
                   _repetitionsCompleted += _completedReps;
