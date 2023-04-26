@@ -582,40 +582,6 @@ void _record(String exercise, int session, int reps) {
   }
 }
 
-Future<List<ChartData>> makeList(String exercise, int session) async {
-  final box = await Hive.openBox(exercise);
-
-  final chartData = <ChartData>[];
-  for (int i = 1; i <= box.length; i++) {
-    final reps = box.get(i).toInt();
-    chartData.add(ChartData(session, reps));
-  }
-
-  return chartData;
-}
-
-Future<List<ChartData>> _fetchChartData(String exercise) async {
-  final pushupData = await makeList('PushUps', 1);
-  final situpData = await makeList('SitUps', 1);
-  final squatData = await makeList('Squats', 1);
-
-  List<ChartData> chartData = [];
-  if (exercise == 'PushUps') {
-    chartData = pushupData;
-  } else if (exercise == 'SitUps') {
-    chartData = situpData;
-  } else if (exercise == 'Squats') {
-    chartData = squatData;
-  }
-
-  for (int session = 1; session <= 10; session++) {
-    final data = await makeList(exercise, session);
-    chartData.addAll(data);
-  }
-
-  return chartData;
-}
-
 //converted to stateful to allow a call of "setstate()" within the elevatedbutton refresh in bottom of column.
 class HistoryPage extends StatefulWidget {
   @override
@@ -700,6 +666,33 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
     );
   }
+
+  Future<List<ChartData>> makeList(String input) async {
+    List<ChartData> chartData = [];
+
+    var box = await Hive.openBox(input);
+    int j = 1;
+    int length = 0;
+    //establish length of box
+    while (box.get(j.toInt()) != null) {
+      length = length + 1;
+      chartData.add(ChartData(j, box.get(j).toInt()));
+      j = j + 1;
+    }
+
+    /*for (int i = 1; i <= length; i++) {
+    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
+  }*/
+    //print(box.get(100));
+
+    return chartData;
+  }
+
+//future simply declares that there will be a list of chartdata objects and returns it when available.
+  Future<List<ChartData>> _fetchChartData(exercise) async {
+    final data = await makeList(exercise);
+    return data;
+  }
 }
 
 class ChartData {
@@ -738,6 +731,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
       false; // Boolean flag to indicate if the exercise is in progress
   int _repetitionsCompleted = 0; // Number of repetitions completed
   Timer? _timer; // Timer instance, nullable because it may be null
+  int session = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -770,7 +764,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             onTap: () {
                               setState(() {
                                 // Sets the selected exercise to 'Pushups' and the button color to red.
-                                _record('Pushups', 1, 1); //TODO REMOVE LATER
+                                _record('Pushups', session,
+                                    _completedReps); //TODO REMOVE LATER
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
                                 _stopTimer();
@@ -1038,9 +1033,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
               onPressed: () async {
                 final box = await Hive.openBox(_selectedExercise);
                 await box.add(_completedReps);
+                session++;
+                _repetitionsCompleted += _completedReps;
                 setState(() {
-                  // Update _repetitionsCompleted, exerciseInProgress, timerStarted, timeElapsed
-                  _repetitionsCompleted += _completedReps;
+                  // Update  exerciseInProgress, timerStarted, timeElapsed
                   _exerciseInProgress = false;
                   _timerStarted = false;
                   _timeElapsed = 0; // Reset the timer to 0
