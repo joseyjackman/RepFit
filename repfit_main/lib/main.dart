@@ -33,18 +33,6 @@ var Squats = Hive.box('Squats');
 
 //checks the entered exercise against a predefined list, as flutter/dart is annoying i have to use these...
 //if the entered exc is matched, the respective box is opened then the data is added to it through ".put()"
-void _record(String exercise, int session, int reps) {
-  if (exercise == 'Pushups') {
-    Hive.openBox(exercise);
-    Pushups.put(session, reps);
-  } else if (exercise == 'Situps') {
-    Hive.openBox(exercise);
-    Situps.put(session, reps);
-  } else if (exercise == 'Squats') {
-    Hive.openBox(exercise);
-    Squats.put(session, reps);
-  }
-}
 
 Future main() async {
   //await Hive.initFlutter();
@@ -581,6 +569,19 @@ class ExerciseDatabase extends StatelessWidget {
    selected exercise to "box", loops through all non-null elements of the list, and returns 
                 the list once it reaches a null element. */
 
+void _record(String exercise, int session, int reps) {
+  if (exercise == 'Pushups') {
+    Hive.openBox(exercise);
+    Pushups.put(session, reps);
+  } else if (exercise == 'Situps') {
+    Hive.openBox(exercise);
+    Situps.put(session, reps);
+  } else if (exercise == 'Squats') {
+    Hive.openBox(exercise);
+    Squats.put(session, reps);
+  }
+}
+
 Future<List<ChartData>> makeList(String exercise, int session) async {
   final box = await Hive.openBox(exercise);
 
@@ -607,7 +608,7 @@ Future<List<ChartData>> _fetchChartData(String exercise) async {
     chartData = squatData;
   }
 
-  for (int session = 2; session <= 10; session++) {
+  for (int session = 1; session <= 10; session++) {
     final data = await makeList(exercise, session);
     chartData.addAll(data);
   }
@@ -891,6 +892,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
     // and increments the _timeElapsed variable by 1.
     _timer ??= Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
+        _timerStarted = true;
         _timeElapsed++;
       });
     });
