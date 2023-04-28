@@ -15,8 +15,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-//early attempt at data persistence/storage:
-import 'user_data.dart';
 //import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:hive/hive.dart';
@@ -671,27 +669,20 @@ class _HistoryPageState extends State<HistoryPage> {
     List<ChartData> chartData = [];
 
     var box = await Hive.openBox(input);
-    int j = 1;
-    int length = 0;
+    int j = 0;
+    //changed to 0 from 1
     //establish length of box
     while (box.get(j.toInt()) != null) {
-      length = length + 1;
       chartData.add(ChartData(j, box.get(j).toInt()));
       j = j + 1;
     }
-
-    /*for (int i = 1; i <= length; i++) {
-    chartData.add(ChartData(i.toString(), box.get(i).toInt()));
-  }*/
-    //print(box.get(100));
-
     return chartData;
   }
 
 //future simply declares that there will be a list of chartdata objects and returns it when available.
   Future<List<ChartData>> _fetchChartData(exercise) async {
-    final data = await makeList(exercise);
-    return data;
+    return await makeList(exercise);
+    //return data;
   }
 }
 
@@ -764,8 +755,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             onTap: () {
                               setState(() {
                                 // Sets the selected exercise to 'Pushups' and the button color to red.
-                                _record('Pushups', session,
-                                    _completedReps); //TODO REMOVE LATER
+                                //_record('Pushups', session, _completedReps);
                                 _selectedExercise = 'Pushups';
                                 _buttonColor = Colors.red;
                                 _stopTimer();
@@ -998,6 +988,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                             Start of _showRepetitionDialog Method
   -----------------------------------------------------------------------------------------*/
   void _showRepetitionsDialog() {
+    Hive.openBox(_selectedExercise);
     showDialog(
       // Use the showDialog method to display the AlertDialog
       context: context,
@@ -1031,8 +1022,9 @@ class _StartSessionPageState extends State<StartSessionPage> {
             ElevatedButton(
               // Create Save Button
               onPressed: () async {
-                final box = await Hive.openBox(_selectedExercise);
-                await box.add(_completedReps);
+                // add here _record
+
+                _record(_selectedExercise, session, _completedReps);
                 session++;
                 _repetitionsCompleted += _completedReps;
                 setState(() {
