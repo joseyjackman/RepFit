@@ -687,6 +687,7 @@ class StartSessionPage extends StatefulWidget {
   const StartSessionPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _StartSessionPageState createState() => _StartSessionPageState();
 }
 
@@ -787,7 +788,7 @@ class _StartSessionPageState extends State<StartSessionPage> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary:
+                backgroundColor:
                     _buttonColor, // Sets the background color of the button to the selected exercises's color.
               ),
               child: Text(
