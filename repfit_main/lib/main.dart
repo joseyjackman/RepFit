@@ -16,8 +16,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 //import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'package:hive/hive.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 // Create variables for the three exercises
@@ -93,6 +92,8 @@ class MyAppState extends ChangeNotifier {
                             Start of MyHomePage Class
 -----------------------------------------------------------------------------------------*/
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -256,11 +257,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             Start of GeneratorPage Class
 -----------------------------------------------------------------------------------------*/
 class GeneratorPage extends StatelessWidget {
+  const GeneratorPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -273,12 +273,13 @@ class GeneratorPage extends StatelessWidget {
                             Start of TutorialPage Class
 -----------------------------------------------------------------------------------------*/
 class TutorialPage extends StatelessWidget {
+  const TutorialPage({super.key});
+
   //begin modifications to add a youtube player:
   //video ids below:
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
     Widget intro = Container(
         padding: const EdgeInsets.all(32),
         child: Row(
@@ -416,6 +417,8 @@ class TutorialPage extends StatelessWidget {
                             Start of ExerciseDatabase Class
 -----------------------------------------------------------------------------------------*/
 class ExerciseDatabase extends StatelessWidget {
+  const ExerciseDatabase({super.key});
+
   @override
   Widget build(BuildContext context) {
     Widget pushupSection = Container(
@@ -519,8 +522,6 @@ class ExerciseDatabase extends StatelessWidget {
       ),
     );
 
-    Color color = Theme.of(context).primaryColor;
-
     return MaterialApp(
       title: 'Exercise Database',
       home: Scaffold(
@@ -535,27 +536,6 @@ class ExerciseDatabase extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Column _buildButtonColumn(Color color, IconData icon, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -582,6 +562,8 @@ void _record(String exercise, int session, int reps) {
 
 //converted to stateful to allow a call of "setstate()" within the elevatedbutton refresh in bottom of column.
 class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
+
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 }
@@ -804,13 +786,13 @@ class _StartSessionPageState extends State<StartSessionPage> {
                   },
                 );
               },
-              child: Text(
-                _selectedExercise, // The text for the button, which displays the currently selected exercise.
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 primary:
                     _buttonColor, // Sets the background color of the button to the selected exercises's color.
+              ),
+              child: Text(
+                _selectedExercise, // The text for the button, which displays the currently selected exercise.
+                style: TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(height: 16), // Adds some spacing below the button.
@@ -830,14 +812,14 @@ class _StartSessionPageState extends State<StartSessionPage> {
                     ? _startTimer()
                     : _stopTimer(); // Starts or stops the timer when the button is pressed.
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey,
+              ),
               child: Text(
                 _timerStarted
                     ? 'Stop'
                     : 'Start', // The text for the button changes between 'Start' and 'Stop' depending on wheather the timer is currently counting or not.
                 style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
               ),
             ),
             // Button to end exercise and save repetitions completed
@@ -847,10 +829,10 @@ class _StartSessionPageState extends State<StartSessionPage> {
                   _stopExercise();
                   _showRepetitionsDialog();
                 },
-                child: const Text('End Exercise'),
                 style: ElevatedButton.styleFrom(
-                  primary: Color.fromRGBO(253, 243, 242, 0.738),
+                  backgroundColor: Color.fromRGBO(253, 243, 242, 0.738),
                 ),
+                child: const Text('End Exercise'),
               ),
           ],
         ),
@@ -1041,14 +1023,6 @@ class _StartSessionPageState extends State<StartSessionPage> {
         );
       },
     );
-  }
-
-  /*-----------------------------------------------------------------------------------------
-                            Start of _saveRepetitions Method
-  -----------------------------------------------------------------------------------------*/
-  void _saveRepetitions() {
-    // TODO: save the repetitions completed
-    print('Repetitions Completed: $_repetitionsCompleted');
   }
 
   /*-----------------------------------------------------------------------------------------
