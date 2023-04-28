@@ -1023,8 +1023,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
               // Create Save Button
               onPressed: () async {
                 // add here _record
-
-                _record(_selectedExercise, session, _completedReps);
+                //changed _completedreps to repetitionscompleted
+                _record(_selectedExercise, session, _repetitionsCompleted);
                 session++;
                 _repetitionsCompleted += _completedReps;
                 setState(() {
