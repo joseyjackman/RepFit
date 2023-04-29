@@ -239,8 +239,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
                       ),
-                    if (selectedIndex == 0) SizedBox(height: 1),
-                    Expanded(child: page),
+                    Visibility(
+                      visible: selectedIndex != 0,
+                      child: Expanded(child: page),
+                    ),
                   ],
                 ),
               ),
