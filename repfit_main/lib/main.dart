@@ -235,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 )),
                             Text(
-                                'RepFit was founded by Hunter Odom, Austin Jackman, and Raymond Riddell, three young Computer Science majors with a passion for both exercise and helping others. Filler text filler text filler text filler text.')
+                                'RepFit was founded by Hunter Odom, Austin Jackman, and Raymond Riddell, three young Computer Science majors with a passion for both exercise and helping others.')
                           ],
                         ),
                       ),
