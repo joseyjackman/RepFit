@@ -119,16 +119,22 @@ class _MyHomePageState extends State<MyHomePage> {
     appState.backgroundColor = appState.backgroundColors[pageName] ??
         Color.fromARGB(255, 163, 214, 255); // default background color
 
+    Widget page;
     switch (selectedIndex) {
       case 0:
+        page = GeneratorPage();
         break;
       case 1:
+        page = TutorialPage();
         break;
       case 2:
+        page = ExerciseDatabase();
         break;
       case 3:
+        page = HistoryPage();
         break;
       case 4:
+        page = StartSessionPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -233,6 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
                       ),
+                    if (selectedIndex == 0) SizedBox(height: 1),
+                    Expanded(child: page),
                   ],
                 ),
               ),
