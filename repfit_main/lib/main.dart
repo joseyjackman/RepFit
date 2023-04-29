@@ -49,10 +49,12 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'RepFit',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Color.fromARGB(255, 79, 195, 237)),
         ),
         home: MyHomePage(),
       ),
@@ -72,9 +74,9 @@ class MyAppState extends ChangeNotifier {
   }
 
   var backgroundColors = {
-    'Generator': Color.fromARGB(255, 192, 255, 216),
-    'Tutorial': Color.fromARGB(255, 163, 214, 255),
-    'Exercise Database': Color.fromARGB(255, 236, 192, 255),
+    'Generator': Color.fromARGB(255, 188, 228, 242),
+    'Tutorial': Color.fromARGB(255, 225, 239, 249),
+    'Exercise Database': Color.fromARGB(255, 176, 230, 255),
     'History': Color.fromARGB(255, 255, 244, 193),
     'Start Session': Color.fromARGB(255, 255, 192, 192),
   };
@@ -524,6 +526,7 @@ class ExerciseDatabase extends StatelessWidget {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Exercise Database',
       home: Scaffold(
         appBar: AppBar(
