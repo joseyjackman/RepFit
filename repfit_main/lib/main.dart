@@ -37,6 +37,10 @@ Future main() async {
   runApp(MyApp());
 }
 
+int pushupSession = 0;
+int situpSession = 0;
+int squatSession = 0;
+
 /*-----------------------------------------------------------------------------------------
                             Start of MyApp Class
 -----------------------------------------------------------------------------------------*/
@@ -709,6 +713,8 @@ class _StartSessionPageState extends State<StartSessionPage> {
       false; // Boolean flag to indicate if the exercise is in progress
   int _repetitionsCompleted = 0; // Number of repetitions completed
   Timer? _timer; // Timer instance, nullable because it may be null
+
+  //session=0 previously declared here. ##################################
   int session = 0;
 
   @override
@@ -1011,8 +1017,33 @@ class _StartSessionPageState extends State<StartSessionPage> {
               onPressed: () async {
                 // add here _record
                 //changed _completedreps to repetitionscompleted
+
+                //established global variables to avoid session reset when leaving page.
+                if (_selectedExercise == "Pushups") {
+                  session = pushupSession;
+                }
+                if (_selectedExercise == "Situps") {
+                  session = situpSession;
+                }
+                if (_selectedExercise == "Squats") {
+                  session = squatSession;
+                }
+
                 _record(_selectedExercise, session, _repetitionsCompleted);
-                session++;
+
+                if (_selectedExercise == "Pushups") {
+                  pushupSession++;
+                  session = pushupSession;
+                }
+                if (_selectedExercise == "Situps") {
+                  situpSession++;
+                  session = situpSession;
+                }
+                if (_selectedExercise == "Squats") {
+                  squatSession++;
+                  session = squatSession;
+                }
+
                 _repetitionsCompleted += _completedReps;
                 setState(() {
                   // Update  exerciseInProgress, timerStarted, timeElapsed
