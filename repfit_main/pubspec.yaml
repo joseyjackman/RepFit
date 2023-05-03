@@ -39,12 +39,20 @@ dependencies:
   provider: ^6.0.5
   english_words: ^4.0.0
   syncfusion_flutter_charts: ^20.4.50
-  video_player: ^2.5.1
-  sqflite:
+  #video_player: ^2.5.1
+  #sqflite:
   path:
+  youtube_player_flutter: ^8.1.2
+  #path_provider: ^1.6.27
+  hive: ^2.2.3
+  hive_flutter:
 
 
 dev_dependencies:
+  #stuff for hive
+  hive_generator: 
+  build_runner: 
+
   flutter_test:
     sdk: flutter
 
@@ -67,7 +75,14 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+      - assets/database_vids/pushup.gif
+      - assets/database_vids/situp.gif
+      - assets/database_vids/squat.gif
+      - assets/images/logo.png
+      - assets/images/whiteboys.png
+      
+
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
@@ -96,3 +111,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  
+
+
+ 
